@@ -61,4 +61,33 @@ public class ProductControllerTest
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
         Assert.IsNull(action.Value, "Le produit n'est pas null");
     }
+    [TestMethod]
+    public void ShouldCreateProduct()
+    {
+        // Given : un produit en base de donnée
+        Produit produitInDb = new Produit()
+        {
+            NomProduit = "Chaise",
+            Description = "Une superbe chaise",
+            NomPhoto = "Une superbe chaise bleu",
+            UriPhoto = "https://ikea.fr/chaise.jpg"
+        };
+
+        _context.Produits.Add(produitInDb);
+        _context.SaveChanges();
+
+        // When : J'appelle la méthode get de mon api pour récupérer le produit
+        ActionResult<Produit> action = _productController.Create(produitInDb).GetAwaiter().GetResult();
+
+        Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
+
+        // Then : On récupère le produit et le code de retour est 200
+        Assert.IsNotNull(action);
+        Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
+
+        // Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult));
+    }
+
+
+
 }
