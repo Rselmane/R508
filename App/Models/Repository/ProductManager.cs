@@ -1,13 +1,14 @@
 using App.Models.EntityFramework;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Models.Repository;
 
 public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 {
-    public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
+    public async Task<ActionResult<IEnumerable<Produit?>>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await context.Produits.ToListAsync();
     }
 
     public async Task<ActionResult<Produit?>> GetByIdAsync(int id)
@@ -17,7 +18,7 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 
     public async Task<ActionResult<Produit?>> GetByStringAsync(string str)
     {
-        throw new NotImplementedException();
+        return await context.Produits.FirstOrDefaultAsync(u => u.NomProduit.ToUpper() == str.ToUpper());
     }
 
     public async Task AddAsync(Produit entity)
@@ -28,11 +29,14 @@ public class ProductManager(AppDbContext context) : IDataRepository<Produit>
 
     public async Task UpdateAsync(Produit entityToUpdate, Produit entity)
     {
-        throw new NotImplementedException();
+        context.Produits.Attach(entityToUpdate);
+        context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Produit entity)
     {
-        throw new NotImplementedException();
+        context.Produits.Remove(entity);
+        await context.SaveChangesAsync();
     }
 }
