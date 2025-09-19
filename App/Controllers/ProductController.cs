@@ -10,13 +10,15 @@ public class ProductController : ControllerBase
 {
     private readonly IDataRepository<Produit> _productManager;
 
-    public ProductController(ProductManager manager)
+    public ProductController(IDataRepository<Produit> manager)
     {
         _productManager = manager;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Produit>> Get(int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<Produit?>> Get(int id)
     {
         var result = await _productManager.GetByIdAsync(id);
 
@@ -28,42 +30,9 @@ public class ProductController : ControllerBase
         return result;
     }
 
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
-    {
-        return await _productManager.GetAllAsync();
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<Produit>> Create(Produit produit)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        await _productManager.AddAsync(produit);
-        return CreatedAtAction("Get", new { id = produit.IdProduit }, produit);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update( int id , Produit produit)
-    {
-        if (id != produit.IdProduit)
-        {
-            return BadRequest();
-        }
-
-        var existingProduit = await _productManager.GetByIdAsync(produit.IdProduit);
-        if (existingProduit == null)
-        {
-            return NotFound();
-        }
-
-        await _productManager.UpdateAsync(existingProduit.Value, produit);
-        return NoContent();
-    }
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
         ActionResult<Produit?> produit = await _productManager.GetByIdAsync(id);
@@ -75,6 +44,45 @@ public class ProductController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult<IEnumerable<Produit>>> GetAll()
+    {
+        return await _productManager.GetAllAsync();
+    }
 
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Produit>> Create([FromBody] Produit produit)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        await _productManager.AddAsync(produit);
+        return CreatedAtAction("Get", new { id = produit.IdProduit }, produit);
+    }
 
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(int id, [FromBody] Produit produit)
+    {
+        if (id != produit.IdProduit)
+        {
+            return BadRequest();
+        }
+
+        ActionResult<Produit?> prodToUpdate = await _productManager.GetByIdAsync(id);
+
+        if (prodToUpdate.Value == null)
+        {
+            return NotFound();
+        }
+
+        await _productManager.UpdateAsync(prodToUpdate.Value, produit);
+        return NoContent();
+    }
 }
