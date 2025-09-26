@@ -7,7 +7,9 @@ namespace App.Models.EntityFramework;
 public partial class AppDbContext : DbContext
 {
     public DbSet<Produit> Produits { get; set; }
-    
+    public DbSet<Marque> Marques { get; set; }
+    public DbSet<TypeProduit> TypeProduits { get; internal set; }
+
     public AppDbContext()
     {
     }

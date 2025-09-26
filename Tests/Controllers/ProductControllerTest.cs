@@ -1,11 +1,12 @@
-using System.Collections.Generic;
 using App.Controllers;
+using App.DTO;
 using App.Models;
 using App.Models.EntityFramework;
 using App.Models.Repository;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Tests.Controllers;
 
@@ -36,19 +37,17 @@ public class ProductControllerTest
             NomPhoto = "Une superbe chaise bleu",
             UriPhoto = "https://ikea.fr/chaise.jpg"
         };
-
         _context.Produits.Add(produitInDb);
         _context.SaveChanges();
 
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<Produit> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+        ActionResult<ProduitDetailDTO> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(Produit));
-
-        Produit returnProduct = action.Value;
-        Assert.AreEqual(produitInDb.NomProduit, returnProduct.NomProduit);
+        Assert.IsInstanceOfType(action.Value, typeof(ProduitDetailDTO));
+        ProduitDetailDTO returnProduct = action.Value; // 
+        Assert.AreEqual(produitInDb.NomProduit, returnProduct.Nom);
     }
 
     [TestMethod]
@@ -131,7 +130,7 @@ public class ProductControllerTest
     public void GetProductShouldReturnNotFound()
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<Produit> action = _productController.Get(0).GetAwaiter().GetResult();
+        ActionResult<ProduitDetailDTO> action = _productController.Get(0).GetAwaiter().GetResult(); ;
 
         // Then : On ne renvoie rien et on renvoie 404
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
@@ -142,23 +141,27 @@ public class ProductControllerTest
     public void ShouldCreateProduct()
     {
         // Given
-        Produit productToInsert = new()
+        ProductAddDTO productToInsert = new()
         {
-            NomProduit = "Chaise",
+            Nom = "Chaise",
             Description = "Une superbe chaise",
             NomPhoto = "Une superbe chaise bleu",
             UriPhoto = "https://ikea.fr/chaise.jpg"
         };
 
         // When
-        ActionResult<Produit> action = _productController.Create(productToInsert).GetAwaiter().GetResult();
+        ActionResult<ProduitDetailDTO> action = _productController.Create(productToInsert).GetAwaiter().GetResult(); // ✅ Corrigé le type
 
         // Then
-        Produit productInDb = _context.Produits.Find(productToInsert.IdProduit);
+        var createdResult = (CreatedAtActionResult)action.Result;
+        var createdDto = (ProduitDetailDTO)createdResult.Value;
+
+        Produit productInDb = _context.Produits.Find(createdDto.Nom);  // pas sûr de ça 
 
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
+        Assert.AreEqual(productToInsert.Nom, productInDb.NomProduit);
     }
 
     [TestMethod]

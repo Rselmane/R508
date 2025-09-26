@@ -4,39 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Models.Repository;
 
-public class ProductManager(AppDbContext context) : IDataRepository<Produit>
+public class ProductManager(AppDbContext context) : CrudRepository<Produit>(context)
 {
-    public async Task<ActionResult<IEnumerable<Produit?>>> GetAllAsync()
+
+    public override async Task<Produit?> GetByStringAsync(string nom)
     {
-        return await context.Produits.ToListAsync();
+        return await _context.Set<Produit>() .FirstOrDefaultAsync(p => p.NomProduit == nom);
     }
 
-    public async Task<ActionResult<Produit?>> GetByIdAsync(int id)
-    {
-        return await context.Produits.FindAsync(id);
-    }
 
-    public async Task<ActionResult<Produit?>> GetByStringAsync(string str)
-    {
-        return await context.Produits.FirstOrDefaultAsync(u => u.NomProduit.ToUpper() == str.ToUpper());
-    }
-
-    public async Task AddAsync(Produit entity)
-    {
-        await context.Produits.AddAsync(entity);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task UpdateAsync(Produit entityToUpdate, Produit entity)
-    {
-        context.Produits.Attach(entityToUpdate);
-        context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-        await context.SaveChangesAsync();
-    }
-
-    public async Task DeleteAsync(Produit entity)
-    {
-        context.Produits.Remove(entity);
-        await context.SaveChangesAsync();
-    }
 }

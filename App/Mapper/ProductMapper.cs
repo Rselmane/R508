@@ -10,7 +10,7 @@ namespace App.Mapper
         {
             
             // Mapping Produit -> ProduitDto
-            CreateMap<Produit, ProduitDto>()
+            CreateMap<Produit, ProduitDTO>()
                 .ForMember(dest => dest.Marque,
                            opt => opt.MapFrom(src => src.MarqueNavigation != null ? src.MarqueNavigation.NomMarque : null))
                 .ForMember(dest => dest.Type,

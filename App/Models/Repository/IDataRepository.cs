@@ -1,13 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-
-namespace App.Models.Repository;
-
-public interface IDataRepository<TEntity>
+public interface IDataRepository<TEntity> where TEntity : class
 {
-    Task<ActionResult<IEnumerable<TEntity>>> GetAllAsync();
-    Task<ActionResult<TEntity?>> GetByIdAsync(int id);
-    Task<ActionResult<TEntity?>> GetByStringAsync(string str);
-    Task AddAsync(TEntity entity);
+    Task<IEnumerable<TEntity>> GetAllAsync();
+    Task<TEntity?> GetByIdAsync(int id);
+    Task<TEntity?> GetByStringAsync(string str);
+    Task<TEntity> AddAsync(TEntity entity);
     Task UpdateAsync(TEntity entityToUpdate, TEntity entity);
     Task DeleteAsync(TEntity entity);
 }
