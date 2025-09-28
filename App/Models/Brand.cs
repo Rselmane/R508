@@ -6,11 +6,11 @@ namespace App.Models;
 public class Brand
 {
     [Key]
-    [Column("id_marque")]
-    public int IdMarque { get; set; }
+    [Column("idBrand")]
+    public int IdBrand { get; set; }
 
-    [Column("nom_marque")] public string NomMarque { get; set; } = null!;
+    [Column("brandName")] public string BrandName { get; set; } = null!;
 
-    [InverseProperty(nameof(Product.MarqueNavigation))]
-    public virtual ICollection<Product> Produits { get; set; } = null!;
+    [InverseProperty(nameof(Product.NavigationBrand))]
+    public virtual ICollection<Product> Products { get; set; } = null!;
 }

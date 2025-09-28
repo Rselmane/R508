@@ -9,7 +9,7 @@ public class ProductManager(AppDbContext context) : CrudRepository<Product>(cont
 
     public override async Task<Product?> GetByStringAsync(string nom)
     {
-        return await _context.Set<Product>() .FirstOrDefaultAsync(p => p.NomProduit == nom);
+        return await _context.Set<Product>() .FirstOrDefaultAsync(p => p.ProductName == nom);
     }
 
 

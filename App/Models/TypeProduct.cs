@@ -6,12 +6,12 @@ namespace App.Models;
 public class TypeProduct
 {
     [Key]
-    [Column("id_type_produit")]
-    public int IdTypeProduit { get; set; }
+    [Column("idTypeProduct")]
+    public int IdTypeProduct { get; set; }
 
-    [Column("nom_type_produit")]
-    public string NomTypeProduit { get; set; } = null!;
+    [Column("typeProductName")]
+    public string TypeProductName { get; set; } = null!;
     
-    [InverseProperty(nameof(Product.TypeProduitNavigation))]
-    public virtual ICollection<Product> Produits { get; set; } = null!;
+    [InverseProperty(nameof(Product.NavigationTypeProduct))]
+    public virtual ICollection<Product> Products { get; set; } = null!;
 }

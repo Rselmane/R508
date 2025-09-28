@@ -25,33 +25,33 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.Entity<Product>(e =>
         {
-            e.HasKey(p => p.IdProduit);
+            e.HasKey(p => p.IdProduct);
             
-            e.HasOne(p => p.MarqueNavigation)
-                .WithMany(m => m.Produits)
+            e.HasOne(p => p.NavigationBrand)
+                .WithMany(m => m.Products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_produits_marque");
             
-            e.HasOne(p => p.TypeProduitNavigation)
-                .WithMany(m => m.Produits)
+            e.HasOne(p => p.NavigationTypeProduct)
+                .WithMany(m => m.Products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_produits_type_produit");
         });
         modelBuilder.Entity<TypeProduct>(e =>
         {
-            e.HasKey(p => p.IdTypeProduit);
+            e.HasKey(p => p.IdTypeProduct);
 
-            e.HasMany(p => p.Produits)
-                .WithOne(m => m.TypeProduitNavigation)
+            e.HasMany(p => p.Products)
+                .WithOne(m => m.NavigationTypeProduct)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
         
         modelBuilder.Entity<Brand>(e =>
         {
-            e.HasKey(p => p.IdMarque);
+            e.HasKey(p => p.IdBrand);
 
-            e.HasMany(p => p.Produits)
-                .WithOne(m => m.MarqueNavigation)
+            e.HasMany(p => p.Products)
+                .WithOne(m => m.NavigationBrand)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
         

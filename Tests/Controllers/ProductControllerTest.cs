@@ -32,22 +32,22 @@ public class ProductControllerTest
         // Given : un produit en base de donnée
         Product produitInDb = new Product()
         {
-            NomProduit = "Chaise",
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
         _context.Produits.Add(produitInDb);
         _context.SaveChanges();
 
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduct).GetAwaiter().GetResult();
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
         ProductDetailDTO returnProduct = action.Value; // 
-        Assert.AreEqual(produitInDb.NomProduit, returnProduct.Nom);
+        Assert.AreEqual(produitInDb.ProductName, returnProduct.Nom);
     }
 
     [TestMethod]
@@ -56,22 +56,22 @@ public class ProductControllerTest
         // Given : Un produit enregistré
         Product produitInDb = new Product()
         {
-            NomProduit = "Chaise",
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
         _context.Produits.Add(produitInDb);
         _context.SaveChanges();
 
         // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _productController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
 
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
-        Assert.IsNull(_context.Produits.Find(produitInDb.IdProduit));
+        Assert.IsNull(_context.Produits.Find(produitInDb.IdProduct));
     }
 
     [TestMethod]
@@ -80,14 +80,14 @@ public class ProductControllerTest
         // Given : Un produit enregistré
         Product produitInDb = new Product()
         {
-            NomProduit = "Chaise",
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
         // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _productController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
 
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
@@ -101,17 +101,17 @@ public class ProductControllerTest
         IEnumerable<Product> productInDb = [
             new()
             {
-                NomProduit = "Chaise",
+                ProductName = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
-                UriPhoto = "https://ikea.fr/chaise.jpg"
+                PhotoName = "Une superbe chaise bleu",
+                PhotoUri = "https://ikea.fr/chaise.jpg"
             },
             new()
             {
-                NomProduit = "Armoir",
+                ProductName = "Armoir",
                 Description = "Une superbe armoire",
-                NomPhoto = "Une superbe armoire jaune",
-                UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
+                PhotoName = "Une superbe armoire jaune",
+                PhotoUri = "https://ikea.fr/armoire-jaune.jpg"
             }
         ];
 
@@ -161,7 +161,7 @@ public class ProductControllerTest
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
-        Assert.AreEqual(productToInsert.Nom, productInDb.NomProduit);
+        Assert.AreEqual(productToInsert.Nom, productInDb.ProductName);
     }
 
     [TestMethod]
@@ -170,29 +170,29 @@ public class ProductControllerTest
         // Given 
         Product produitToEdit = new()
         {
-            NomProduit = "Bureau",
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         _context.Produits.Add(produitToEdit);
         _context.SaveChanges();
 
-        produitToEdit.NomProduit = "Lit";
+        produitToEdit.ProductName = "Lit";
         produitToEdit.Description = "Un super lit";
 
         // When
-        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Product editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
+        Product editedProductInDb = _context.Produits.Find(produitToEdit.IdProduct);
 
         Assert.IsNotNull(editedProductInDb);
-        Assert.AreEqual(produitToEdit.NomProduit, editedProductInDb.NomProduit);
+        Assert.AreEqual(produitToEdit.ProductName, editedProductInDb.ProductName);
         Assert.AreEqual(produitToEdit.Description, editedProductInDb.Description);
     }
 
@@ -202,16 +202,16 @@ public class ProductControllerTest
         // Given 
         Product produitToEdit = new()
         {
-            NomProduit = "Bureau",
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         _context.Produits.Add(produitToEdit);
         _context.SaveChanges();
 
-        produitToEdit.NomProduit = "Lit";
+        produitToEdit.ProductName = "Lit";
         produitToEdit.Description = "Un super lit";
 
         // When
@@ -228,15 +228,15 @@ public class ProductControllerTest
         // Given 
         Product produitToEdit = new()
         {
-            IdProduit = 20,
-            NomProduit = "Bureau",
+            IdProduct = 20,
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         // When
-        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);

@@ -48,11 +48,11 @@ public class ProductControllerMockTest
         // Given : Un produit en enregistré
         Product produitInDb = new()
         {
-            IdProduit = 30,
-            NomProduit = "Chaise",
+            IdProduct = 30,
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
         ProductDetailDTO expectedDto = new()
@@ -63,7 +63,7 @@ public class ProductControllerMockTest
         };
 
         _produitManager
-            .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduit))
+            .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduct))
             .ReturnsAsync(produitInDb);
 
         _produitDetailMapper
@@ -71,10 +71,10 @@ public class ProductControllerMockTest
             .Returns(expectedDto);
 
         // When : On appelle la méthode GET de l'API pour récupérer le produit
-        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduct).GetAwaiter().GetResult();
 
         // Then : On récupère le produit et le code de retour est 200
-        _produitManager.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduit), Times.Once);
+        _produitManager.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduct), Times.Once);
         _produitDetailMapper.Verify(mapper => mapper.ToDTO(produitInDb), Times.Once);
 
         Assert.IsNotNull(action);
@@ -90,15 +90,15 @@ public class ProductControllerMockTest
         // Given : Un produit enregistré
         Product produitInDb = new()
         {
-            IdProduit = 20,
-            NomProduit = "Chaise",
+            IdProduct = 20,
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
         _produitManager
-            .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduit))
+            .Setup(manager => manager.GetByIdAsync(produitInDb.IdProduct))
             .ReturnsAsync(produitInDb);
 
         _produitManager
@@ -106,13 +106,13 @@ public class ProductControllerMockTest
             .Returns(Task.CompletedTask);
 
         // When : On souhaite supprimer un produit depuis l'API
-        IActionResult action = _productController.Delete(produitInDb.IdProduit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
 
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        _produitManager.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduit), Times.Once);
+        _produitManager.Verify(manager => manager.GetByIdAsync(produitInDb.IdProduct), Times.Once);
         _produitManager.Verify(manager => manager.DeleteAsync(produitInDb), Times.Once);
     }
 
@@ -143,19 +143,19 @@ public class ProductControllerMockTest
         IEnumerable<Product> productInDb = [
             new()
             {
-                IdProduit = 1,
-                NomProduit = "Chaise",
+                IdProduct = 1,
+                ProductName = "Chaise",
                 Description = "Une superbe chaise",
-                NomPhoto = "Une superbe chaise bleu",
-                UriPhoto = "https://ikea.fr/chaise.jpg"
+                PhotoName = "Une superbe chaise bleu",
+                PhotoUri = "https://ikea.fr/chaise.jpg"
             },
             new()
             {
-                IdProduit = 2,
-                NomProduit = "Armoir",
+                IdProduct = 2,
+                ProductName = "Armoir",
                 Description = "Une superbe armoire",
-                NomPhoto = "Une superbe armoire jaune",
-                UriPhoto = "https://ikea.fr/armoire-jaune.jpg"
+                PhotoName = "Une superbe armoire jaune",
+                PhotoUri = "https://ikea.fr/armoire-jaune.jpg"
             }
         ];
 
@@ -211,11 +211,11 @@ public class ProductControllerMockTest
         // Given : Un produit créé
         Product produitCreated = new()
         {
-            IdProduit = 30,
-            NomProduit = "Chaise",
+            IdProduct = 30,
+            ProductName = "Chaise",
             Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
         ProductAddDTO expectedDto = new()
@@ -262,15 +262,15 @@ public class ProductControllerMockTest
         // Given : Un produit à mettre à jour
         Product produitToEdit = new()
         {
-            IdProduit = 20,
-            NomProduit = "Bureau",
+            IdProduct = 20,
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         _produitManager
-            .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduit))
+            .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduct))
             .ReturnsAsync(produitToEdit);
 
         _produitManager
@@ -278,13 +278,13 @@ public class ProductControllerMockTest
             .Returns(Task.CompletedTask);
 
         // When : On appelle la méthode PUT du controller pour mettre à jour le produit
-        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
 
         // Then : On vérifie que le produit a bien été modifié et que le code renvoyé et NO_CONTENT (204)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Once);
+        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Once);
         _produitManager.Verify(manager => manager.UpdateAsync(produitToEdit, produitToEdit), Times.Once);
     }
 
@@ -294,11 +294,11 @@ public class ProductControllerMockTest
         // Given : Un produit à mettre à jour
         Product produitToEdit = new()
         {
-            IdProduit = 20,
-            NomProduit = "Bureau",
+            IdProduct = 20,
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         // When : On appelle la méthode PUT du controller pour mettre à jour le produit,
@@ -309,7 +309,7 @@ public class ProductControllerMockTest
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(BadRequestResult));
 
-        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Never);
+        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Never);
         _produitManager.Verify(manager => manager.UpdateAsync(produitToEdit, produitToEdit), Times.Never);
     }
 
@@ -319,25 +319,25 @@ public class ProductControllerMockTest
         // Given : Un produit à mettre à jour qui n'est pas enregistré
         Product produitToEdit = new()
         {
-            IdProduit = 20,
-            NomProduit = "Bureau",
+            IdProduct = 20,
+            ProductName = "Bureau",
             Description = "Un super bureau",
-            NomPhoto = "Un super bureau bleu",
-            UriPhoto = "https://ikea.fr/bureau.jpg"
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
         _produitManager
-            .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduit))
+            .Setup(manager => manager.GetByIdAsync(produitToEdit.IdProduct))
             .ReturnsAsync((Product?)null);
 
         // When : On appelle la méthode PUT du controller pour mettre à jour un produit qui n'est pas enregistré
-        IActionResult action = _productController.Update(produitToEdit.IdProduit, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
 
         // Then : On vérifie que l'API renvoie un code NOT_FOUND (404)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
 
-        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduit), Times.Once);
+        _produitManager.Verify(manager => manager.GetByIdAsync(produitToEdit.IdProduct), Times.Once);
         _produitManager.Verify(manager => manager.UpdateAsync(produitToEdit, produitToEdit), Times.Never);
     }
 }

@@ -63,27 +63,27 @@ public class ProductController(
         // Gestion de la marque
         if (!string.IsNullOrEmpty(dto.Marque))
         {
-            var marque = await context.Marques.FirstOrDefaultAsync(x => x.NomMarque == dto.Marque);
+            var marque = await context.Marques.FirstOrDefaultAsync(x => x.BrandName == dto.Marque);
             if (marque == null)
             {
-                marque = new Brand { NomMarque = dto.Marque };
+                marque = new Brand { BrandName = dto.Marque };
                 context.Marques.Add(marque);
                 await context.SaveChangesAsync();
             }
-            produit.IdMarque = marque.IdMarque;
+            produit.IdBrand = marque.IdBrand;
         }
 
         // Gestion du type produit
         if (!string.IsNullOrEmpty(dto.TypeProduit))
         {
-            var typeProduit = await context.TypeProduits.FirstOrDefaultAsync(x => x.NomTypeProduit == dto.TypeProduit);
+            var typeProduit = await context.TypeProduits.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduit);
             if (typeProduit == null)
             {
-                typeProduit = new TypeProduct { NomTypeProduit = dto.TypeProduit };
+                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduit };
                 context.TypeProduits.Add(typeProduit);
                 await context.SaveChangesAsync();
             }
-            produit.IdTypeProduit = typeProduit.IdTypeProduit;
+            produit.IdTypeProduct = typeProduit.IdTypeProduct;
         }
 
         // Sauvegarde du produit
@@ -91,7 +91,7 @@ public class ProductController(
 
         // Retourner le détail du produit créé
         var produitDetail = mapper.Map<ProductDetailDTO>(produit);
-        return CreatedAtAction("Get", new { id = produit.IdProduit }, produitDetail);
+        return CreatedAtAction("Get", new { id = produit.IdProduct }, produitDetail);
     }
 
     [HttpPut("{id}")]
@@ -100,7 +100,7 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, [FromBody] Product produit)
     {
-        if (id != produit.IdProduit)
+        if (id != produit.IdProduct)
         {
             return BadRequest();
         }

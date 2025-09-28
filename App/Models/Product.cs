@@ -7,44 +7,44 @@ namespace App.Models;
 public class Product
 {
     [Key]
-    [Column("id_produit")]
-    public int IdProduit { get; set; }
+    [Column("idProduct")]
+    public int IdProduct { get; set; }
 
-    [Column("nom_produit")] 
-    public string NomProduit { get; set; } = null!;
+    [Column("productName")] 
+    public string ProductName { get; set; } = null!;
 
     [Column("description")] public string Description { get; set; } = null!;
 
-    [Column("nom_photo")] public string NomPhoto { get; set; } = null!;
+    [Column("photoName")] public string PhotoName { get; set; } = null!;
 
-    [Column("uri_photo")] public string UriPhoto { get; set; } = null!;
+    [Column("photoUri")] public string PhotoUri { get; set; } = null!;
 
-    [Column("id_type_produit")]
-    public int? IdTypeProduit { get; set; }
+    [Column("idTypeProduct")]
+    public int? IdTypeProduct { get; set; }
 
-    [Column("id_marque")]
-    public int? IdMarque { get; set; }
+    [Column("idBrand")]
+    public int? IdBrand { get; set; }
 
-    [Column("stock_reel")]
-    public int StockReel { get; set; }
+    [Column("actualStock")]
+    public int ActualStock { get; set; }
     
-    [Column("stock_min")]
-    public int StockMin { get; set; }
+    [Column("minStock")]
+    public int MinStock { get; set; }
     
-    [Column("stock_max")]
-    public int StockMax { get; set; }
+    [Column("maxStock")]
+    public int MaxStock { get; set; }
 
-    [ForeignKey(nameof(IdMarque))]
-    [InverseProperty(nameof(Brand.Produits))]
-    public virtual Brand? MarqueNavigation { get; set; } = null!;
+    [ForeignKey(nameof(IdBrand))]
+    [InverseProperty(nameof(Brand.Products))]
+    public virtual Brand? NavigationBrand { get; set; } = null!;
     
-    [ForeignKey(nameof(IdTypeProduit))]
-    [InverseProperty(nameof(TypeProduct.Produits))]
-    public virtual TypeProduct? TypeProduitNavigation { get; set; } = null!;
+    [ForeignKey(nameof(IdTypeProduct))]
+    [InverseProperty(nameof(TypeProduct.Products))]
+    public virtual TypeProduct? NavigationTypeProduct { get; set; } = null!;
 
     protected bool Equals(Product other)
     {
-        return NomProduit == other.NomProduit;
+        return ProductName == other.ProductName;
     }
 
     public override bool Equals(object? obj)
