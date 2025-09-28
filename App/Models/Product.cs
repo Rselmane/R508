@@ -1,57 +1,62 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Models;
 
 [Table(("Product"))]
+[Index(nameof(IdProduct), IsUnique = true)]
+[Index(nameof(ProductName), IsUnique = true)]
+[Index(nameof(IdTypeProduct))]
+[Index(nameof(IdBrand))]
 public class Product
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("idProduct")]
     public int IdProduct { get; set; }
 
     [Column("productName")] 
+    [MaxLength(128)]
+    [Required]
     public string ProductName { get; set; } = null!;
 
-    [Column("description")] public string Description { get; set; } = null!;
+    [Column("description")]
+    [MaxLength(1024)]
+    public string? Description { get; set; } = null;
 
-    [Column("photoName")] public string PhotoName { get; set; } = null!;
+    [Column("photoName")]
+    [MaxLength(256)]
+    public string? PhotoName { get; set; } = null;
 
-    [Column("photoUri")] public string PhotoUri { get; set; } = null!;
+    [Column("photoUri")]
+    [MaxLength(512)]
+    public string? PhotoUri { get; set; } = null;
 
     [Column("idTypeProduct")]
-    public int? IdTypeProduct { get; set; }
+    public int? IdTypeProduct { get; set; } = null;
 
     [Column("idBrand")]
-    public int? IdBrand { get; set; }
+    public int? IdBrand { get; set; } = null;
 
     [Column("actualStock")]
-    public int ActualStock { get; set; }
-    
+    [Required]
+    public int ActualStock { get; set; } = 0;
+
     [Column("minStock")]
-    public int MinStock { get; set; }
-    
+    [Required]
+    public int MinStock { get; set; } = 0;
+
     [Column("maxStock")]
-    public int MaxStock { get; set; }
+    [Required]
+    public int MaxStock { get; set; } = int.MaxValue;
 
     [ForeignKey(nameof(IdBrand))]
     [InverseProperty(nameof(Brand.Products))]
-    public virtual Brand? NavigationBrand { get; set; } = null!;
+    public virtual Brand? NavigationBrand { get; set; } = null;
     
     [ForeignKey(nameof(IdTypeProduct))]
     [InverseProperty(nameof(TypeProduct.Products))]
-    public virtual TypeProduct? NavigationTypeProduct { get; set; } = null!;
+    public virtual TypeProduct? NavigationTypeProduct { get; set; } = null;
 
-    protected bool Equals(Product other)
-    {
-        return ProductName == other.ProductName;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((Product)obj);
-    }
 }

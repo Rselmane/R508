@@ -30,12 +30,12 @@ public partial class AppDbContext : DbContext
             e.HasOne(p => p.NavigationBrand)
                 .WithMany(m => m.Products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_products_brand");
+                .HasConstraintName("FK_product_brand");
             
             e.HasOne(p => p.NavigationTypeProduct)
                 .WithMany(m => m.Products)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_products_type_product");
+                .HasConstraintName("FK_product_type");
         });
         modelBuilder.Entity<TypeProduct>(e =>
         {
