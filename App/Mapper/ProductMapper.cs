@@ -7,8 +7,7 @@ namespace App.Mapper
     public class ProductMapper : Profile
     {
         public ProductMapper() 
-        {
-            
+        {            
             // Mapping Produit -> ProduitDto
             CreateMap<Product, ProductDTO>()
                 .ForMember(dest => dest.Brand,
