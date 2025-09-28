@@ -2,16 +2,16 @@ using BlazorApp.Models;
 
 namespace BlazorApp.Service;
 
-public class WSService : IService<Produit>
+public class WSService : IService<Product>
 {
     private readonly HttpClient httpClient = new() 
     { 
         BaseAddress = new Uri("http://localhost:5109/api/") 
     };
 
-    public async Task AddAsync(Produit produit)
+    public async Task AddAsync(Product product)
     {
-        await httpClient.PostAsJsonAsync<Produit>("produits", produit);
+        await httpClient.PostAsJsonAsync<Product>("produits", product);
     }
 
     public async Task DeleteAsync(int id)
@@ -19,26 +19,26 @@ public class WSService : IService<Produit>
         await httpClient.DeleteAsync($"produits/{id}");
     }
 
-    public async Task<List<Produit>?> GetAllAsync()
+    public async Task<List<Product>?> GetAllAsync()
     {
-        return await httpClient.GetFromJsonAsync<List<Produit>?>("produits");
+        return await httpClient.GetFromJsonAsync<List<Product>?>("produits");
     }
 
-    public async Task<Produit?> GetByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        return await httpClient.GetFromJsonAsync<Produit?>($"produits/{id}");
+        return await httpClient.GetFromJsonAsync<Product?>($"produits/{id}");
     }
 
-    public async Task<Produit?> GetByNameAsync(string name)
+    public async Task<Product?> GetByNameAsync(string name)
     {
         var response = await httpClient.PostAsJsonAsync("produits/search", name);
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<Produit>();
+        return await response.Content.ReadFromJsonAsync<Product>();
     }
 
-    public async Task UpdateAsync(Produit updatedEntity)
+    public async Task UpdateAsync(Product updatedProduct)
     {
-        await httpClient.PutAsJsonAsync<Produit>($"produits/{updatedEntity.IdProduit}", updatedEntity);
+        await httpClient.PutAsJsonAsync<Product>($"produits/{updatedProduct.IdProduct}", updatedProduct);
     }
 }
