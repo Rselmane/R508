@@ -23,7 +23,7 @@ public class ProductController(
     public async Task<ActionResult<ProductDetailDTO?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result == null ? NotFound() : mapper.Map<ProductDetailDTO>(result);
+        return result == null ? NotFound() : Ok(mapper.Map<ProductDetailDTO>(result));
     }
 
     [HttpDelete("{id}")]
@@ -44,7 +44,7 @@ public class ProductController(
     {
         var produits = await manager.GetAllAsync();
         var produitDTOs = mapper.Map<IEnumerable<ProductDTO>>(produits);
-        return new ActionResult<IEnumerable<ProductDTO>>(produitDTOs);
+        return Ok(produitDTOs); // renvoie 200 OK même si la liste est vide
     }
 
     [HttpPost]
