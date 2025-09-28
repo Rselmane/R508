@@ -58,7 +58,7 @@ public class ProductControllerMockTest
         ProductDetailDTO expectedDto = new()
         {
             Id = 30,
-            Nom = "Chaise",
+            Name = "Chaise",
             Description = "Une superbe chaise"
         };
 
@@ -160,8 +160,8 @@ public class ProductControllerMockTest
         ];
 
         IEnumerable<ProductDTO> expectedDtos = [
-            new() { Id = 1, Nom = "Chaise" },
-            new() { Id = 2, Nom = "Armoir" }
+            new() { Id = 1, Name = "Chaise" },
+            new() { Id = 2, Name = "Armoir" }
         ];
 
         _produitManager
@@ -229,7 +229,7 @@ public class ProductControllerMockTest
         ProductDetailDTO expectedDetailDto = new()
         {
             Id = 30,
-            Nom = "Chaise",
+            Name = "Chaise",
             Description = "Une superbe chaise"
         };
 

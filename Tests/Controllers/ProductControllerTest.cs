@@ -47,7 +47,7 @@ public class ProductControllerTest
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
         ProductDetailDTO returnProduct = action.Value; // 
-        Assert.AreEqual(produitInDb.ProductName, returnProduct.Nom);
+        Assert.AreEqual(produitInDb.ProductName, returnProduct.Name);
     }
 
     [TestMethod]
@@ -156,7 +156,7 @@ public class ProductControllerTest
         var createdResult = (CreatedAtActionResult)action.Result;
         var createdDto = (ProductDetailDTO)createdResult.Value;
 
-        Product productInDb = _context.Produits.Find(createdDto.Nom);  // pas sûr de ça 
+        Product productInDb = _context.Produits.Find(createdDto.Name);  // pas sûr de ça 
 
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
