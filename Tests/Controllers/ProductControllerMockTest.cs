@@ -58,7 +58,7 @@ public class ProductControllerMockTest
         ProductDetailDTO expectedDto = new()
         {
             Id = 30,
-            Nom = "Chaise",
+            Name = "Chaise",
             Description = "Une superbe chaise"
         };
 
@@ -229,7 +229,7 @@ public class ProductControllerMockTest
         ProductDetailDTO expectedDetailDto = new()
         {
             Id = 30,
-            Nom = "Chaise",
+            Name = "Chaise",
             Description = "Une superbe chaise"
         };
 
