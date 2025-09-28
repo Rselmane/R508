@@ -46,9 +46,27 @@ public class BrandController(
         return new ActionResult<IEnumerable<BrandDTO>>(brandDTOs);
     }
 
-    // TODO Create BrandController
-    //
-    //
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ProductDetailDTO>> Create([FromBody] BrandDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        // Mapping DTO → Produit
+        Brand brand = mapper.Map<Brand>(dto);
+
+
+        // Sauvegarde du produit
+        await manager.AddAsync(brand);
+
+        // Retourner le détail du produit créé
+        ProductDetailDTO BrandDetail = mapper.Map<ProductDetailDTO>(brand);
+        return CreatedAtAction("Get", new { id = brand.IdBrand }, BrandDetail);
+    }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
