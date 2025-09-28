@@ -1,9 +1,8 @@
 ﻿using App.DTO;
-using App.Mapper;
 using App.Models;
-
 using App.Models.EntityFramework;
 using App.Models.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,27 +11,19 @@ namespace App.Controllers;
 [Route("api/produits")]
 [ApiController]
 public class ProductController(
-    IMapper<Produit, ProduitDTO> produitMapperDTO,
-    IMapper<Produit, ProduitDetailDTO> produitDetailMapper,
-    IMapper<Produit, ProductAddDTO> productAddMapper,
-    IDataRepository<Produit> manager,
+    IMapper mapper,
+    IDataRepository<Product> manager,
     AppDbContext context
     ) : ControllerBase
 {
-    private ProductManager manager;
-
-    public ProductController(ProductManager manager)
-    {
-        this.manager = manager;
-    }
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProduitDetailDTO?>> Get(int id)
+    public async Task<ActionResult<ProductDetailDTO?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result == null ? NotFound() : produitDetailMapper.ToDTO(result);
+        return result == null ? NotFound() : mapper.Map<ProductDetailDTO>(result);
     }
 
     [HttpDelete("{id}")]
@@ -40,7 +31,7 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
-        ActionResult<Produit?> produit = await manager.GetByIdAsync(id);
+        ActionResult<Product?> produit = await manager.GetByIdAsync(id);
         if (produit.Value == null)
             return NotFound();
         await manager.DeleteAsync(produit.Value);
@@ -49,15 +40,17 @@ public class ProductController(
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ProduitDTO>>> GetAll()
+    public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAll()
     {
-        IEnumerable<ProduitDTO> produits = produitMapperDTO.ToDTOs((await manager.GetAllAsync()));
-        return new ActionResult<IEnumerable<ProduitDTO>>(produits);
+        var produits = await manager.GetAllAsync();
+        var produitDTOs = mapper.Map<IEnumerable<ProductDTO>>(produits);
+        return new ActionResult<IEnumerable<ProductDTO>>(produitDTOs);
     }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProduitDetailDTO>> Create([FromBody] ProductAddDTO dto)
+    public async Task<ActionResult<ProductDetailDTO>> Create([FromBody] ProductAddDTO dto)
     {
         if (!ModelState.IsValid)
         {
@@ -65,7 +58,7 @@ public class ProductController(
         }
 
         // Mapping DTO → Produit
-        var produit = productAddMapper.ToEntity(dto);
+        var produit = mapper.Map<Product>(dto);
 
         // Gestion de la marque
         if (!string.IsNullOrEmpty(dto.Marque))
@@ -73,7 +66,7 @@ public class ProductController(
             var marque = await context.Marques.FirstOrDefaultAsync(x => x.NomMarque == dto.Marque);
             if (marque == null)
             {
-                marque = new Marque { NomMarque = dto.Marque };
+                marque = new Brand { NomMarque = dto.Marque };
                 context.Marques.Add(marque);
                 await context.SaveChangesAsync();
             }
@@ -86,7 +79,7 @@ public class ProductController(
             var typeProduit = await context.TypeProduits.FirstOrDefaultAsync(x => x.NomTypeProduit == dto.TypeProduit);
             if (typeProduit == null)
             {
-                typeProduit = new TypeProduit { NomTypeProduit = dto.TypeProduit };
+                typeProduit = new TypeProduct { NomTypeProduit = dto.TypeProduit };
                 context.TypeProduits.Add(typeProduit);
                 await context.SaveChangesAsync();
             }
@@ -97,7 +90,7 @@ public class ProductController(
         await manager.AddAsync(produit);
 
         // Retourner le détail du produit créé
-        var produitDetail = produitDetailMapper.ToDTO(produit);
+        var produitDetail = mapper.Map<ProductDetailDTO>(produit);
         return CreatedAtAction("Get", new { id = produit.IdProduit }, produitDetail);
     }
 
@@ -105,13 +98,13 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, [FromBody] Produit produit)
+    public async Task<IActionResult> Update(int id, [FromBody] Product produit)
     {
         if (id != produit.IdProduit)
         {
             return BadRequest();
         }
-        ActionResult<Produit?> prodToUpdate = await manager.GetByIdAsync(id);
+        ActionResult<Product?> prodToUpdate = await manager.GetByIdAsync(id);
         if (prodToUpdate.Value == null)
         {
             return NotFound();

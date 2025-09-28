@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Models;
 
-public class TypeProduit
+public class TypeProduct
 {
     [Key]
     [Column("id_type_produit")]
@@ -12,6 +12,6 @@ public class TypeProduit
     [Column("nom_type_produit")]
     public string NomTypeProduit { get; set; } = null!;
     
-    [InverseProperty(nameof(Produit.TypeProduitNavigation))]
-    public virtual ICollection<Produit> Produits { get; set; } = null!;
+    [InverseProperty(nameof(Product.TypeProduitNavigation))]
+    public virtual ICollection<Product> Produits { get; set; } = null!;
 }

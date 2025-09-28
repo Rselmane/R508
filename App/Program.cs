@@ -2,6 +2,8 @@ using App.Models;
 using App.Models.EntityFramework;
 using App.Models.Repository;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace App;
 
@@ -17,8 +19,17 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddDbContext<AppDbContext>();
-        builder.Services.AddScoped<IDataRepository<Produit>, ProductManager>();
+        builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();
+        builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("SeriesDbContextRemote")));
+        builder.Services.AddAutoMapper(cfg =>
+        {
+            cfg.AddProfile<App.Mapper.ProductMapper>();
+            cfg.AddProfile<App.Mapper.ProductDetailMapper>();
+            cfg.AddProfile<App.Mapper.ProductMappingProfile>();
+            // Add any other individual mapper profiles here
+        });
+
 
         var app = builder.Build();
 

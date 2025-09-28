@@ -30,7 +30,7 @@ public class ProductControllerTest
     public void ShouldGetProduct()
     {
         // Given : un produit en base de donnée
-        Produit produitInDb = new Produit()
+        Product produitInDb = new Product()
         {
             NomProduit = "Chaise",
             Description = "Une superbe chaise",
@@ -41,12 +41,12 @@ public class ProductControllerTest
         _context.SaveChanges();
 
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<ProduitDetailDTO> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
+        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduit).GetAwaiter().GetResult();
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(ProduitDetailDTO));
-        ProduitDetailDTO returnProduct = action.Value; // 
+        Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
+        ProductDetailDTO returnProduct = action.Value; // 
         Assert.AreEqual(produitInDb.NomProduit, returnProduct.Nom);
     }
 
@@ -54,7 +54,7 @@ public class ProductControllerTest
     public void ShouldDeleteProduct()
     {
         // Given : Un produit enregistré
-        Produit produitInDb = new Produit()
+        Product produitInDb = new Product()
         {
             NomProduit = "Chaise",
             Description = "Une superbe chaise",
@@ -78,7 +78,7 @@ public class ProductControllerTest
     public void ShouldNotDeleteProductBecauseProductDoesNotExist()
     {
         // Given : Un produit enregistré
-        Produit produitInDb = new Produit()
+        Product produitInDb = new Product()
         {
             NomProduit = "Chaise",
             Description = "Une superbe chaise",
@@ -98,7 +98,7 @@ public class ProductControllerTest
     public void ShouldGetAllProducts()
     {
         // Given : Des produits enregistrées
-        IEnumerable<Produit> productInDb = [
+        IEnumerable<Product> productInDb = [
             new()
             {
                 NomProduit = "Chaise",
@@ -123,14 +123,14 @@ public class ProductControllerTest
 
         // Then : Tous les produits sont récupérés
         Assert.IsNotNull(products);
-        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Produit>));
+        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Product>));
     }
 
     [TestMethod]
     public void GetProductShouldReturnNotFound()
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<ProduitDetailDTO> action = _productController.Get(0).GetAwaiter().GetResult(); ;
+        ActionResult<ProductDetailDTO> action = _productController.Get(0).GetAwaiter().GetResult(); ;
 
         // Then : On ne renvoie rien et on renvoie 404
         Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
@@ -150,13 +150,13 @@ public class ProductControllerTest
         };
 
         // When
-        ActionResult<ProduitDetailDTO> action = _productController.Create(productToInsert).GetAwaiter().GetResult(); // ✅ Corrigé le type
+        ActionResult<ProductDetailDTO> action = _productController.Create(productToInsert).GetAwaiter().GetResult(); // ✅ Corrigé le type
 
         // Then
         var createdResult = (CreatedAtActionResult)action.Result;
-        var createdDto = (ProduitDetailDTO)createdResult.Value;
+        var createdDto = (ProductDetailDTO)createdResult.Value;
 
-        Produit productInDb = _context.Produits.Find(createdDto.Nom);  // pas sûr de ça 
+        Product productInDb = _context.Produits.Find(createdDto.Nom);  // pas sûr de ça 
 
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
@@ -168,7 +168,7 @@ public class ProductControllerTest
     public void ShouldUpdateProduct()
     {
         // Given 
-        Produit produitToEdit = new()
+        Product produitToEdit = new()
         {
             NomProduit = "Bureau",
             Description = "Un super bureau",
@@ -189,7 +189,7 @@ public class ProductControllerTest
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Produit editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
+        Product editedProductInDb = _context.Produits.Find(produitToEdit.IdProduit);
 
         Assert.IsNotNull(editedProductInDb);
         Assert.AreEqual(produitToEdit.NomProduit, editedProductInDb.NomProduit);
@@ -200,7 +200,7 @@ public class ProductControllerTest
     public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
     {
         // Given 
-        Produit produitToEdit = new()
+        Product produitToEdit = new()
         {
             NomProduit = "Bureau",
             Description = "Un super bureau",
@@ -226,7 +226,7 @@ public class ProductControllerTest
     public void ShouldNotUpdateProductBecauseProductDoesNotExist()
     {
         // Given 
-        Produit produitToEdit = new()
+        Product produitToEdit = new()
         {
             IdProduit = 20,
             NomProduit = "Bureau",

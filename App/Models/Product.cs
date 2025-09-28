@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace App.Models;
 
 [Table(("produit"))]
-public class Produit
+public class Product
 {
     [Key]
     [Column("id_produit")]
@@ -35,14 +35,14 @@ public class Produit
     public int StockMax { get; set; }
 
     [ForeignKey(nameof(IdMarque))]
-    [InverseProperty(nameof(Marque.Produits))]
-    public virtual Marque? MarqueNavigation { get; set; } = null!;
+    [InverseProperty(nameof(Brand.Produits))]
+    public virtual Brand? MarqueNavigation { get; set; } = null!;
     
     [ForeignKey(nameof(IdTypeProduit))]
-    [InverseProperty(nameof(TypeProduit.Produits))]
-    public virtual TypeProduit? TypeProduitNavigation { get; set; } = null!;
+    [InverseProperty(nameof(TypeProduct.Produits))]
+    public virtual TypeProduct? TypeProduitNavigation { get; set; } = null!;
 
-    protected bool Equals(Produit other)
+    protected bool Equals(Product other)
     {
         return NomProduit == other.NomProduit;
     }
@@ -52,6 +52,6 @@ public class Produit
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((Produit)obj);
+        return Equals((Product)obj);
     }
 }

@@ -6,7 +6,7 @@ public class TypeProductMapper : Profile
 {
     public TypeProductMapper()
     {
-        CreateMap<TypeProduit, TypeProduitDTO>()
+        CreateMap<TypeProduct, TypeProductDTO>()
         .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IdTypeProduit))
         .ForMember(dest => dest.Nom, opt => opt.MapFrom(src => src.NomTypeProduit));
     }

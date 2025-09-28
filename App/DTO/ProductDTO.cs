@@ -1,6 +1,6 @@
 ﻿namespace App.DTO
 {
-    public class ProduitDTO
+    public class ProductDTO
     {
         public int Id { get; set; }
 

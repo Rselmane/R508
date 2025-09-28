@@ -6,9 +6,9 @@ namespace App.Models.EntityFramework;
 
 public partial class AppDbContext : DbContext
 {
-    public DbSet<Produit> Produits { get; set; }
-    public DbSet<Marque> Marques { get; set; }
-    public DbSet<TypeProduit> TypeProduits { get; internal set; }
+    public DbSet<Product> Produits { get; set; }
+    public DbSet<Brand> Marques { get; set; }
+    public DbSet<TypeProduct> TypeProduits { get; internal set; }
 
     public AppDbContext()
     {
@@ -19,13 +19,11 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=postgres; uid=postgres; password=postgres;");
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Produit>(e =>
+        modelBuilder.Entity<Product>(e =>
         {
             e.HasKey(p => p.IdProduit);
             
@@ -39,7 +37,7 @@ public partial class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_produits_type_produit");
         });
-        modelBuilder.Entity<TypeProduit>(e =>
+        modelBuilder.Entity<TypeProduct>(e =>
         {
             e.HasKey(p => p.IdTypeProduit);
 
@@ -48,7 +46,7 @@ public partial class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
         
-        modelBuilder.Entity<Marque>(e =>
+        modelBuilder.Entity<Brand>(e =>
         {
             e.HasKey(p => p.IdMarque);
 
