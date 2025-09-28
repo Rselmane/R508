@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Controllers;
 
-[Route("api/produits")]
+[Route("api/product")]
 [ApiController]
 public class ProductController(
     IMapper mapper,

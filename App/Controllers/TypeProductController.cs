@@ -45,9 +45,27 @@ public class TypeProductController(
         return new ActionResult<IEnumerable<TypeProductDTO>>(typeProductDTOs);
     }
 
-    // TODO Create TypeProductController
-    //
-    //
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<TypeProductDTO>> Create([FromBody] TypeProductDTO dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        // Mapping DTO → Marque
+        TypeProduct typeProduct = mapper.Map<TypeProduct>(dto);
+
+
+        // Sauvegarde de la  marque
+        await manager.AddAsync(typeProduct);
+
+        // Retourner le détail de la marque  créé
+        TypeProductDTO typeProductDetail = mapper.Map<TypeProductDTO>(typeProduct);
+        return CreatedAtAction("Get", new { id = typeProduct.IdTypeProduct }, typeProductDetail);
+    }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
