@@ -9,9 +9,9 @@ public class WSService : IService<Product>
         BaseAddress = new Uri("http://localhost:5109/api/") 
     };
 
-    public async Task AddAsync(Product produit)
+    public async Task AddAsync(Product product)
     {
-        await httpClient.PostAsJsonAsync<Product>("produits", produit);
+        await httpClient.PostAsJsonAsync<Product>("produits", product);
     }
 
     public async Task DeleteAsync(int id)
@@ -37,8 +37,8 @@ public class WSService : IService<Product>
         return await response.Content.ReadFromJsonAsync<Product>();
     }
 
-    public async Task UpdateAsync(Product updatedEntity)
+    public async Task UpdateAsync(Product updatedProduct)
     {
-        await httpClient.PutAsJsonAsync<Product>($"produits/{updatedEntity.IdProduct}", updatedEntity);
+        await httpClient.PutAsJsonAsync<Product>($"produits/{updatedProduct.IdProduct}", updatedProduct);
     }
 }
