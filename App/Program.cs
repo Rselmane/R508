@@ -20,6 +20,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();
+        builder.Services.AddScoped<IDataRepository<Brand>, BrandManager>();
+        builder.Services.AddScoped<IDataRepository<TypeProduct>, TypeProductManager>();
         builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("SeriesDbContextRemote")));
         builder.Services.AddAutoMapper(cfg =>
@@ -27,6 +29,8 @@ public class Program
             cfg.AddProfile<App.Mapper.ProductMapper>();
             cfg.AddProfile<App.Mapper.ProductDetailMapper>();
             cfg.AddProfile<App.Mapper.ProductMappingProfile>();
+            cfg.AddProfile<App.Mapper.BrandMapper>();
+            cfg.AddProfile<App.Mapper.TypeProductMapper>();
             // Add any other individual mapper profiles here
         });
 
