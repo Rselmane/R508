@@ -7,9 +7,9 @@ namespace App.Models.Repository;
 public class ProductManager(AppDbContext context) : CrudRepository<Product>(context)
 {
 
-    public override async Task<Product?> GetByStringAsync(string nom)
+    public override async Task<Product?> GetByStringAsync(string name)
     {
-        return await _context.Set<Product>() .FirstOrDefaultAsync(p => p.ProductName == nom);
+        return await _context.Set<Product>() .FirstOrDefaultAsync(p => p.ProductName == name);
     }
 
 
