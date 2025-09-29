@@ -42,9 +42,12 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAll()
     {
-        var produits = await manager.GetAllAsync();
-        var produitDTOs = mapper.Map<IEnumerable<ProductDTO>>(produits);
-        return Ok(produitDTOs); // renvoie 200 OK même si la liste est vide
+        var products = await manager.GetAllAsync();
+        if (products == null || !products.Any())
+            return NotFound();
+
+        var dtos = mapper.Map<IEnumerable<ProductDTO>>(products);
+        return Ok(dtos);
     }
 
     [HttpPost]
