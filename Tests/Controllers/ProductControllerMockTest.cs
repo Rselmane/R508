@@ -96,10 +96,12 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task Get_ProductDoesNotExist_ReturnsNotFound()
         {
-            _productRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            _sampleProduct.IdProduct = 99;
+
+            _productRepositoryMock.Setup(r => r.GetByIdAsync(_sampleProduct.IdProduct))
                                   .ReturnsAsync((Product?)null);
 
-            var result = await _controller.Get(99);
+            var result = await _controller.Get(_sampleProduct.IdProduct);
 
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
@@ -148,10 +150,11 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task Delete_ProductDoesNotExist_ReturnsNotFound()
         {
-            _productRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            _sampleProduct.IdProduct = 99;
+            _productRepositoryMock.Setup(r => r.GetByIdAsync(_sampleProduct.IdProduct))
                                   .ReturnsAsync((Product?)null);
 
-            var result = await _controller.Delete(99);
+            var result = await _controller.Delete(_sampleProduct.IdProduct);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         }
@@ -166,7 +169,7 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task Create_ValidProduct_ReturnsCreatedAtWhenion()
         {
-            var dto = new ProductAddDTO { Nom = "Chair" };
+            ProductAddDTO dto = new ProductAddDTO { Nom = "Chair" };
 
             _mapperMock.Setup(m => m.Map<Product>(dto)).Returns(_sampleProduct);
             _productRepositoryMock.Setup(r => r.AddAsync(_sampleProduct)).ReturnsAsync(_sampleProduct);
@@ -175,7 +178,7 @@ namespace Tests.Controllers
             var result = await _controller.Create(dto);
 
             Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
-            var createdResult = (CreatedAtActionResult)result.Result;
+            CreatedAtActionResult createdResult = (CreatedAtActionResult)result.Result;
             Assert.AreEqual(_sampleDetailDTO, createdResult.Value);
         }
 
