@@ -1,20 +1,22 @@
-//using App.Controllers;
-//using App.DTO;
-//using App.Models;
-//using App.Models.EntityFramework;
-//using App.Models.Repository;
-//using JetBrains.Annotations;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using System.Collections.Generic;
+using App.Controllers;
+using App.DTO;
+using App.Models;
+using App.Models.EntityFramework;
+using App.Models.Repository;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
-//namespace Tests.Controllers;
+namespace Tests.Controllers;
 
-//[TestClass]
-//[TestSubject(typeof(ProductController))]
-//[TestCategory("integration")]
-//public class ProductControllerTest
-//{
+[TestClass]
+[TestSubject(typeof(ProductController))]
+[TestCategory("integration")]
+public class ProductControllerTest
+{
+
+
 //    private readonly AppDbContext _context;
 //    private readonly ProductController _productController;
 
@@ -249,4 +251,4 @@
 //        _context.Produits.RemoveRange(_context.Produits);
 //        _context.SaveChanges();
 //    }
-//}
+}
