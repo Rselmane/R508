@@ -15,7 +15,7 @@ public class TypeProductController(
     AppDbContext context
     ) : ControllerBase
 {
-    [HttpGet("{id}")]
+    [HttpGet("type_product/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TypeProductDTO?>> Get(int id)
@@ -24,7 +24,7 @@ public class TypeProductController(
         return result == null ? NotFound() : mapper.Map<TypeProductDTO>(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("remove/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
@@ -36,7 +36,7 @@ public class TypeProductController(
         return NoContent();
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<TypeProductDTO>>> GetAll()
     {
@@ -45,7 +45,7 @@ public class TypeProductController(
         return new ActionResult<IEnumerable<TypeProductDTO>>(typeProductDTOs);
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<TypeProductDTO>> Create([FromBody] TypeProductDTO dto)
@@ -67,7 +67,7 @@ public class TypeProductController(
         return CreatedAtAction("Get", new { id = typeProduct.IdTypeProduct }, typeProductDetail);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("update/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

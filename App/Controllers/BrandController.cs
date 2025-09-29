@@ -16,7 +16,7 @@ public class BrandController(
     AppDbContext context
     ) : ControllerBase
 {
-    [HttpGet("{id}")]
+    [HttpGet("brand/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BrandDTO?>> Get(int id)
@@ -25,7 +25,7 @@ public class BrandController(
         return result == null ? NotFound() : mapper.Map<BrandDTO>(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("remove/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
@@ -37,7 +37,7 @@ public class BrandController(
         return NoContent();
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<BrandDTO>>> GetAll()
     {
@@ -46,7 +46,7 @@ public class BrandController(
         return new ActionResult<IEnumerable<BrandDTO>>(brandDTOs);
     }
 
-    [HttpPost]
+    [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<BrandDTO>> Create([FromBody] BrandDTO dto)
@@ -68,7 +68,7 @@ public class BrandController(
         return CreatedAtAction("Get", new { id = brand.IdBrand }, BrandDetail);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("update/{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
