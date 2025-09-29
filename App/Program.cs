@@ -19,7 +19,7 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();
+        builder.Services.AddScoped<IProductRepository, ProductManager>();
         builder.Services.AddScoped<IDataRepository<Brand>, BrandManager>();
         builder.Services.AddScoped<IDataRepository<TypeProduct>, TypeProductManager>();
         builder.Services.AddDbContext<AppDbContext>(options =>

@@ -12,7 +12,7 @@ namespace App.Controllers;
 [ApiController]
 public class ProductController(
     IMapper mapper,
-    IDataRepository<Product> manager,
+    IProductRepository manager,
     AppDbContext context
     ) : ControllerBase
 {
@@ -42,7 +42,7 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAll()
     {
-        var products = await manager.GetAllAsync();
+        var products = await manager.GetAllWithRelationsAsync();
         if (products == null || !products.Any())
             return NotFound();
 
