@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace App.Controllers;
 
 
-[Route("api/brands")]
+[Route("api/brand")]
 [ApiController]
 public class BrandController(
     IMapper mapper,
