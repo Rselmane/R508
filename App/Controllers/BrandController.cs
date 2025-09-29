@@ -64,7 +64,7 @@ public class BrandController(
         await manager.AddAsync(brand);
 
         // Retourner le détail de la marque  créé
-        ProductDetailDTO BrandDetail = mapper.Map<ProductDetailDTO>(brand);
+        Brand BrandDetail = mapper.Map<Brand>(brand);
         return CreatedAtAction("Get", new { id = brand.IdBrand }, BrandDetail);
     }
 

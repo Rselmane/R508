@@ -21,7 +21,7 @@ namespace Tests.Controllers
     public class ProductControllerMockTest
     {
         // Mocks des dépendances
-        private Mock<IDataRepository<Product>> _productRepositoryMock;
+        private Mock<IProductRepository> _productRepositoryMock;
         private Mock<IMapper> _mapperMock;
         private Mock<AppDbContext> _contextMock;
 
@@ -44,7 +44,7 @@ namespace Tests.Controllers
         public void Setup()
         {
             // Création des mocks
-            _productRepositoryMock = new Mock<IDataRepository<Product>>();
+            _productRepositoryMock = new Mock<IProductRepository>();
             _mapperMock = new Mock<IMapper>();
             _contextMock = new Mock<AppDbContext>();
 
@@ -112,7 +112,7 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task GetAll_ReturnsAllProducts()
         {
-            _productRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(_productList);
+            _productRepositoryMock.Setup(r => r.GetAllWithRelationsAsync()).ReturnsAsync(_productList);
             _mapperMock.Setup(m => m.Map<IEnumerable<ProductDTO>>(_productList))
                        .Returns(_productDTOList);
 
