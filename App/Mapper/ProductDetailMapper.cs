@@ -26,10 +26,14 @@ public class ProductDetailMapper : Profile
             .ForMember(dest => dest.NavigationTypeProduct, opt => opt.MapFrom(src =>
                 src.Type != null ? new TypeProduct { TypeProductName = src.Type } : null))
             .ForMember(dest => dest.NavigationBrand, opt => opt.MapFrom(src =>
-                src.Brand != null ? new Brand { BrandName = src.Name } : null))
+                src.Brand != null ? new Brand { BrandName = src.Brand } : null))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.PhotoName, opt => opt.MapFrom(src => src.PhotoName))
             .ForMember(dest => dest.PhotoUri, opt => opt.MapFrom(src => src.PhotoUri))
-            .ForMember(dest => dest.ActualStock, opt => opt.MapFrom(src => src.Stock ?? 0));
+            .ForMember(dest => dest.ActualStock, opt => opt.MapFrom(src => src.Stock ?? 0))
+            .ForMember(dest => dest.IdTypeProduct, opt => opt.Ignore())
+            .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
+            .ForMember(dest => dest.MinStock, opt => opt.Ignore())
+            .ForMember(dest => dest.MaxStock, opt => opt.Ignore());
     }
 }

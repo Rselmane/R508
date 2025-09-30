@@ -6,7 +6,7 @@ namespace App.Mapper
 {
     public class ProductMapper : Profile
     {
-        public ProductMapper() 
+        public ProductMapper()
         {
             // ProduitDto <-> Produit
             CreateMap<ProductDTO, Product>()
@@ -15,7 +15,15 @@ namespace App.Mapper
                 .ForMember(dest => dest.NavigationTypeProduct, opt => opt.MapFrom(src =>
                     src.Type != null ? new TypeProduct { TypeProductName = src.Type } : null))
                 .ForMember(dest => dest.NavigationBrand, opt => opt.MapFrom(src =>
-                    src.Brand != null ? new Brand { BrandName = src.Brand } : null));
+                    src.Brand != null ? new Brand { BrandName = src.Brand } : null))
+                .ForMember(dest => dest.Description, opt => opt.Ignore())
+                .ForMember(dest => dest.PhotoName, opt => opt.Ignore())
+                .ForMember(dest => dest.PhotoUri, opt => opt.Ignore())
+                .ForMember(dest => dest.IdTypeProduct, opt => opt.Ignore())
+                .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
+                .ForMember(dest => dest.ActualStock, opt => opt.Ignore())
+                .ForMember(dest => dest.MinStock, opt => opt.Ignore())
+                .ForMember(dest => dest.MaxStock, opt => opt.Ignore());
 
             CreateMap<Product, ProductDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IdProduct))
