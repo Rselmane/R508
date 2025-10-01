@@ -120,20 +120,8 @@ namespace Tests.Controllers
 
             // Assert
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-
-            var okResult = (OkObjectResult)result.Result;
-            var actual = okResult.Value as List<TypeProductDTO>;
-
-            // Vérification que la liste est bien retournée
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(_typeProductDTOList.Count, actual.Count);
-
-            // Comparer les propriétés individuelles
-            for (int i = 0; i < _typeProductDTOList.Count; i++)
-            {
-                Assert.AreEqual(_typeProductDTOList[i].Id, actual[i].Id);
-                Assert.AreEqual(_typeProductDTOList[i].Name, actual[i].Name);
-            }
+            CollectionAssert.AreEqual(_typeProductDTOList.ToList(),
+                                                  ((OkObjectResult)result.Result).Value as List<TypeProductDTO>);
         }
 
         #endregion
