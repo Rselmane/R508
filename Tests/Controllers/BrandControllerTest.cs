@@ -14,18 +14,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.AutoMapper;
 
 namespace Tests.Controllers;
 
 [TestClass]
 [TestSubject(typeof(BrandController))]
 [TestCategory("integration")]
-public class BrandControllerTest
+public class BrandControllerTest : AutoMapperConfigTests
 {
     private AppDbContext _context;
     private BrandController _brandController;
-    private MapperConfiguration _config;
-    private IMapper _mapper;
     private IDataRepository<Brand> _manager;
 
     // Objets communs pour les tests
@@ -39,10 +38,6 @@ public class BrandControllerTest
     {
         // Contexte et mapper
         _context = new AppDbContext();
-
-        _config = new MapperConfiguration(cfg => cfg.AddProfile<BrandMapper>(), new LoggerFactory());
-        _config.AssertConfigurationIsValid();
-        _mapper = _config.CreateMapper();
 
         // Manager et controller
         _manager = new BrandManager(_context);
