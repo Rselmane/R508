@@ -14,18 +14,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tests.AutoMapper;
 
 namespace Tests.Controllers;
 
 [TestClass]
 [TestSubject(typeof(BrandController))]
 [TestCategory("integration")]
-public class BrandControllerTest
+public class BrandControllerTest : AutoMapperConfigTests
 {
     private AppDbContext _context;
     private BrandController _brandController;
-    private MapperConfiguration _config;
-    private IMapper _mapper;
     private IDataRepository<Brand> _manager;
 
     // Objets communs pour les tests
@@ -39,10 +38,6 @@ public class BrandControllerTest
     {
         // Contexte et mapper
         _context = new AppDbContext();
-
-        _config = new MapperConfiguration(cfg => cfg.AddProfile<BrandMapper>(), new LoggerFactory());
-        _config.AssertConfigurationIsValid();
-        _mapper = _config.CreateMapper();
 
         // Manager et controller
         _manager = new BrandManager(_context);
@@ -68,12 +63,12 @@ public class BrandControllerTest
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
         ActionResult<BrandDTO> action = _brandController.Get(_brandAdidas.IdBrand).GetAwaiter().GetResult();
-        BrandDTO returnProduct = action.Value; 
+        BrandDTO returnBrand = action.Value; 
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Value, typeof(BrandDTO));
-        Assert.AreEqual(_brandAdidas.BrandName, returnProduct.Name);
+        Assert.AreEqual(_brandAdidas.BrandName, returnBrand.Name);
     }
 
     [TestMethod]
@@ -103,11 +98,11 @@ public class BrandControllerTest
     public void ShouldGetAllBrands()
     {
         // When : On souhaite récupérer tous les produits
-        var products = _brandController.GetAll().GetAwaiter().GetResult();
+        var brands = _brandController.GetAll().GetAwaiter().GetResult();
 
         // Then : Tous les produits sont récupérés
-        Assert.IsNotNull(products);
-        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Brand>));
+        Assert.IsNotNull(brands);
+        Assert.IsInstanceOfType(brands.Value, typeof(IEnumerable<Brand>));
     }
 
     [TestMethod]
@@ -152,10 +147,10 @@ public class BrandControllerTest
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Product editedBrandInDb = _context.Products.Find(_brandAdidas.IdBrand);
+        Brand editedBrandInDb = _context.Brands.Find(_brandAdidas.IdBrand);
 
         Assert.IsNotNull(editedBrandInDb);
-        Assert.AreEqual(_brandAdidas.BrandName, editedBrandInDb.ProductName);
+        Assert.AreEqual(_brandAdidas.BrandName, editedBrandInDb.BrandName);
     }
 
     [TestMethod]
