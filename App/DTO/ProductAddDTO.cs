@@ -2,7 +2,7 @@
 
 namespace App.DTO
 {
-    public class ProductAddDTO
+    public partial class ProductAddDTO
     {
         public string? Nom { get; set; }
         public string? Description { get; set; }
