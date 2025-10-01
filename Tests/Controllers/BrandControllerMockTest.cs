@@ -73,7 +73,7 @@ namespace Tests.Controllers
         /// Teste la récupération d'une marque existante
         /// </summary>
         [TestMethod]
-        public async Task Get_BrandExists_ReturnsOk()
+        public void Get_BrandExists_ReturnsOk()
         {
             // Given : Une marque enregistrée
             _brandRepositoryMock.Setup(r => r.GetByIdAsync(_sampleBrand.IdBrand))
@@ -82,7 +82,7 @@ namespace Tests.Controllers
                        .Returns(_sampleBrandDTO);
 
             // When : On appelle la méthode GET de l'API pour récupérer la marque
-            var result = await _controller.Get(_sampleBrand.IdBrand);
+            var result = _controller.Get(_sampleBrand.IdBrand).GetAwaiter().GetResult();
 
             // Then : On récupère la marque et le code de retour est 200
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
@@ -95,14 +95,14 @@ namespace Tests.Controllers
         /// Teste la récupération d'une marque inexistante
         /// </summary>
         [TestMethod]
-        public async Task Get_BrandDoesNotExist_ReturnsNotFound()
+        public void Get_BrandDoesNotExist_ReturnsNotFound()
         {
             // Given : Pas de marque trouvée par le manager
             _brandRepositoryMock.Setup(r => r.GetByIdAsync(99))
                                   .ReturnsAsync((Brand?)null);
 
             // When : On appelle la méthode GET de l'API pour récupérer une marque inexistante
-            var result = await _controller.Get(99);
+            var result = _controller.Get(99).GetAwaiter().GetResult();
 
             // Then : On ne renvoie rien et on renvoie NOT_FOUND (404)
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
@@ -114,7 +114,7 @@ namespace Tests.Controllers
         /// Teste la récupération de toutes les marques
         /// </summary>
         [TestMethod]
-        public async Task GetAll_ReturnsAllBrands()
+        public void GetAll_ReturnsAllBrands()
         {
             // Given : Des marques enregistrées
             _brandRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(_brandList);
@@ -122,7 +122,7 @@ namespace Tests.Controllers
                        .Returns(_brandDTOList);
 
             // When : On souhaite récupérer toutes les marques
-            var result = await _controller.GetAll();
+            var result = _controller.GetAll().GetAwaiter().GetResult();
 
             // Then : Toutes les marques sont récupérées
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
@@ -140,7 +140,7 @@ namespace Tests.Controllers
         /// Teste la suppression d'une marque existante
         /// </summary>
         [TestMethod]
-        public async Task Delete_BrandExists_ReturnsNoContent()
+        public void Delete_BrandExists_ReturnsNoContent()
         {
             // Given : Une marque enregistrée
             _brandRepositoryMock.Setup(r => r.GetByIdAsync(_sampleBrand.IdBrand))
@@ -149,7 +149,7 @@ namespace Tests.Controllers
                                   .Returns(Task.CompletedTask);
 
             // When : On souhaite supprimer une marque depuis l'API
-            var result = await _controller.Delete(_sampleBrand.IdBrand);
+            var result = _controller.Delete(_sampleBrand.IdBrand).GetAwaiter().GetResult();
 
             // Then : La marque a bien été supprimée et le code HTTP est NO_CONTENT (204)
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
@@ -162,14 +162,14 @@ namespace Tests.Controllers
         /// Teste la suppression d'une marque inexistante
         /// </summary>
         [TestMethod]
-        public async Task Delete_BrandDoesNotExist_ReturnsNotFound()
+        public void Delete_BrandDoesNotExist_ReturnsNotFound()
         {
             // Given : Une marque qui n'est pas enregistrée
             _brandRepositoryMock.Setup(r => r.GetByIdAsync(99))
                                   .ReturnsAsync((Brand?)null);
 
             // When : On souhaite supprimer une marque inexistante depuis l'API
-            var result = await _controller.Delete(99);
+            var result = _controller.Delete(99).GetAwaiter().GetResult();
 
             // Then : L'API renvoie NOT_FOUND (404)
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
@@ -186,7 +186,7 @@ namespace Tests.Controllers
         /// Teste la création d'une marque valide
         /// </summary>
         [TestMethod]
-        public async Task Create_ValidBrand_ReturnsCreatedAtAction()
+        public void Create_ValidBrand_ReturnsCreatedAtAction()
         {
             // Given : Une marque à enregistrer
             var dto = new BrandDTO { Name = "IKA" };
@@ -196,7 +196,7 @@ namespace Tests.Controllers
             _mapperMock.Setup(m => m.Map<BrandDTO>(_sampleBrand)).Returns(_sampleBrandDTO);
 
             // When : On appelle la méthode POST de l'API pour enregistrer la marque
-            var result =  _controller.Create(dto).GetAwaiter().GetResult();
+            var result = _controller.Create(dto).GetAwaiter().GetResult();
 
             // Then : La marque est bien enregistrée et le code renvoyé est CREATED (201)
             Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
@@ -210,13 +210,13 @@ namespace Tests.Controllers
         /// Teste la création d'une marque invalide (modelstate invalide)
         /// </summary>
         [TestMethod]
-        public async Task Create_InvalidModel_ReturnsBadRequest()
+        public void Create_InvalidModel_ReturnsBadRequest()
         {
             // Given : Un ModelState invalide
             _controller.ModelState.AddModelError("Name", "Required");
 
             // When : On appelle la méthode POST avec un DTO invalide
-            var result = await _controller.Create(new BrandDTO());
+            var result = _controller.Create(new BrandDTO()).GetAwaiter().GetResult();
 
             // Then : L'API renvoie BAD_REQUEST (400)
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
@@ -232,7 +232,7 @@ namespace Tests.Controllers
         /// Teste la mise à jour d'une marque valide
         /// </summary>
         [TestMethod]
-        public async Task Update_ValidBrand_ReturnsNoContent()
+        public void Update_ValidBrand_ReturnsNoContent()
         {
             // Given : Une marque à mettre à jour
             var updatedBrand = new Brand { IdBrand = _sampleBrand.IdBrand, BrandName = "IKA Updated" };
@@ -245,7 +245,7 @@ namespace Tests.Controllers
                                   .Returns(Task.CompletedTask);
 
             // When : On appelle la méthode PUT du controller pour mettre à jour la marque
-            var result = await _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO);
+            var result = _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO).GetAwaiter().GetResult();
 
             // Then : On vérifie que la marque a bien été modifiée et que le code renvoyé est NO_CONTENT (204)
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
@@ -258,14 +258,14 @@ namespace Tests.Controllers
         /// Teste la mise à jour d'une marque inexistante
         /// </summary>
         [TestMethod]
-        public async Task Update_BrandDoesNotExist_ReturnsNotFound()
+        public void Update_BrandDoesNotExist_ReturnsNotFound()
         {
             // Given : Une marque à mettre à jour qui n'est pas enregistrée
             _brandRepositoryMock.Setup(r => r.GetByIdAsync(_sampleBrand.IdBrand))
                                   .ReturnsAsync((Brand?)null);
 
             // When : On appelle la méthode PUT du controller pour mettre à jour une marque qui n'est pas enregistrée
-            var result = await _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO);
+            var result = _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO).GetAwaiter().GetResult();
 
             // Then : On vérifie que l'API renvoie un code NOT_FOUND (404)
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
@@ -278,13 +278,13 @@ namespace Tests.Controllers
         /// Teste la mise à jour avec un ModelState invalide
         /// </summary>
         [TestMethod]
-        public async Task Update_InvalidModelState_ReturnsBadRequest()
+        public void Update_InvalidModelState_ReturnsBadRequest()
         {
             // Given : Un ModelState invalide
             _controller.ModelState.AddModelError("Name", "Required");
 
             // When : On appelle la méthode PUT avec un DTO invalide
-            var result = await _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO);
+            var result = _controller.Update(_sampleBrand.IdBrand, _sampleBrandUpdateDTO).GetAwaiter().GetResult();
 
             // Then : On vérifie que l'API renvoie un code BAD_REQUEST (400)
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
