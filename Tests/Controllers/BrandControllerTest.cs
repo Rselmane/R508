@@ -64,7 +64,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldDeleteProduct()
+    public void ShouldDeleteBrand()
     {
         // Given : Un produit enregistré
         Brand brandInDb = new Brand()
@@ -85,7 +85,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldNotDeleteProductBecauseProductDoesNotExist()
+    public void ShouldNotDeleteBrandBecauseBrandDoesNotExist()
     {
         // Given : Un produit enregistré
         Brand produitInDb = new Brand()
@@ -102,7 +102,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldGetAllProducts()
+    public void ShouldGetAllBrands()
     {
         // Given : Des produits enregistrées
         IEnumerable<Brand> brandInDb = [
@@ -128,7 +128,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void GetProductShouldReturnNotFound()
+    public void GetBrandShouldReturnNotFound()
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
         ActionResult<BrandDTO> action = _brandController.Get(0).GetAwaiter().GetResult(); ;
@@ -139,7 +139,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldCreateProduct()
+    public void ShouldCreateBrand()
     {
         // Given
         BrandDTO brandToInsert = new BrandDTO()
@@ -163,7 +163,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldUpdateProduct()
+    public void ShouldUpdateBrand()
     {
         // Given 
         Brand brandToEdit = new Brand()
@@ -190,7 +190,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
+    public void ShouldNotUpdateBrandBecauseIdInUrlIsDifferent()
     {
         // Given 
         Brand brandToEdit = new Brand()
@@ -212,7 +212,7 @@ public class BrandControllerTest
     }
 
     [TestMethod]
-    public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+    public void ShouldNotUpdateBrandBecauseBrandDoesNotExist()
     {
         // Given 
         Brand produitToEdit = new Brand()
