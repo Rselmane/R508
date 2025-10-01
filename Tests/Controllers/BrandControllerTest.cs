@@ -68,11 +68,11 @@ public class BrandControllerTest
     {
         // When : J'appelle la méthode get de mon api pour récupérer le produit
         ActionResult<BrandDTO> action = _brandController.Get(_brandAdidas.IdBrand).GetAwaiter().GetResult();
+        BrandDTO returnProduct = action.Value; 
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
-        BrandDTO returnProduct = action.Value; // 
+        Assert.IsInstanceOfType(action.Value, typeof(BrandDTO));
         Assert.AreEqual(_brandAdidas.BrandName, returnProduct.Name);
     }
 
