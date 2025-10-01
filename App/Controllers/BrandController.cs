@@ -3,7 +3,6 @@ using App.Models;
 using App.Models.EntityFramework;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Controllers;
 
