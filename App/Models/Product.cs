@@ -9,7 +9,7 @@ namespace App.Models;
 [Index(nameof(ProductName), IsUnique = true)]
 [Index(nameof(IdTypeProduct))]
 [Index(nameof(IdBrand))]
-public class Product
+public partial class Product
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
