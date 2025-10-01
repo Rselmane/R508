@@ -22,79 +22,77 @@ namespace Tests.Controllers;
 [TestCategory("integration")]
 public class BrandControllerTest
 {
-    private readonly AppDbContext _context;
-    private readonly BrandController _brandController;
-    private readonly MapperConfiguration _config;
+    private AppDbContext _context;
+    private BrandController _brandController;
+    private MapperConfiguration _config;
+    private IMapper _mapper;
+    private IDataRepository<Brand> _manager;
 
-    public BrandControllerTest()
+    // Objets communs pour les tests
+    private Brand _brandAdidas;
+    private Brand _brandNike;
+    private Brand _brandCorsairEntity;
+    private BrandDTO _brandDtoCorsair;
+
+    [TestInitialize]
+    public void Initialize()
     {
+        // Contexte et mapper
         _context = new AppDbContext();
 
-        _config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<BrandMapper>();
-        }, new LoggerFactory());
-
+        _config = new MapperConfiguration(cfg => cfg.AddProfile<BrandMapper>(), new LoggerFactory());
         _config.AssertConfigurationIsValid();
-        IMapper mapper = _config.CreateMapper();
+        _mapper = _config.CreateMapper();
 
-        IDataRepository<Brand> manager = new BrandManager(_context);
-        _brandController = new BrandController(mapper, manager, _context);
+        // Manager et controller
+        _manager = new BrandManager(_context);
+        _brandController = new BrandController(_mapper, _manager, _context);
+
+        // Données communes : entities
+        _brandAdidas = new Brand { BrandName = "Adidas" };
+        _brandNike = new Brand { BrandName = "Nike" };
+
+        // DTO
+        _brandDtoCorsair = new BrandDTO { Name = "Corsair" };
+
+        // Mapper DTO → Entity et ajouter en DB
+        _brandCorsairEntity = _mapper.Map<Brand>(_brandDtoCorsair);
+
+        // Ajout initial en DB
+        _context.Brands.AddRange(_brandAdidas, _brandNike, _brandCorsairEntity);
+        _context.SaveChanges();
     }
 
     [TestMethod]
     public void ShouldGetBrand()
     {
-        // Given : un produit en base de donnée
-        Brand brandInDb = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-        _context.Brands.Add(brandInDb);
-        _context.SaveChanges();
-
         // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<BrandDTO> action = _brandController.Get(brandInDb.IdBrand).GetAwaiter().GetResult();
+        ActionResult<BrandDTO> action = _brandController.Get(_brandAdidas.IdBrand).GetAwaiter().GetResult();
 
         // Then : On récupère le produit et le code de retour est 200
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
         BrandDTO returnProduct = action.Value; // 
-        Assert.AreEqual(brandInDb.BrandName, returnProduct.Name);
+        Assert.AreEqual(_brandAdidas.BrandName, returnProduct.Name);
     }
 
     [TestMethod]
     public void ShouldDeleteBrand()
     {
-        // Given : Un produit enregistré
-        Brand brandInDb = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-
-        _context.Brands.Add(brandInDb);
-        _context.SaveChanges();
-
         // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _brandController.Delete(brandInDb.IdBrand).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Delete(_brandAdidas.IdBrand).GetAwaiter().GetResult();
 
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
-        Assert.IsNull(_context.Products.Find(brandInDb.IdBrand));
+        Assert.IsNull(_context.Products.Find(_brandAdidas.IdBrand));
     }
 
     [TestMethod]
     public void ShouldNotDeleteBrandBecauseBrandDoesNotExist()
     {
-        // Given : Un produit enregistré
-        Brand produitInDb = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-
         // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _brandController.Delete(produitInDb.IdBrand).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Delete(_brandAdidas.IdBrand).GetAwaiter().GetResult();
 
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
@@ -104,21 +102,6 @@ public class BrandControllerTest
     [TestMethod]
     public void ShouldGetAllBrands()
     {
-        // Given : Des produits enregistrées
-        IEnumerable<Brand> brandInDb = [
-            new()
-            {
-                BrandName = "Adidas"
-            },
-            new()
-            {
-                BrandName = "Nike"
-            }
-        ];
-
-        _context.Brands.AddRange(brandInDb);
-        _context.SaveChanges();
-
         // When : On souhaite récupérer tous les produits
         var products = _brandController.GetAll().GetAwaiter().GetResult();
 
@@ -141,14 +124,8 @@ public class BrandControllerTest
     [TestMethod]
     public void ShouldCreateBrand()
     {
-        // Given
-        BrandDTO brandToInsert = new BrandDTO()
-        {
-            Name = "Adidas"
-        };
-
         // When
-        ActionResult<BrandDTO> action = _brandController.Create(brandToInsert).GetAwaiter().GetResult(); // ✅ Corrigé le type
+        ActionResult<BrandDTO> action = _brandController.Create(_brandDtoCorsair).GetAwaiter().GetResult(); // ✅ Corrigé le type
 
         // Then
         var createdResult = (CreatedAtActionResult)action.Result;
@@ -159,52 +136,38 @@ public class BrandControllerTest
         Assert.IsNotNull(brandInDb);
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
-        Assert.AreEqual(brandToInsert.Name, brandInDb.BrandName);
+        Assert.AreEqual(_brandDtoCorsair.Name, brandInDb.BrandName);
     }
 
     [TestMethod]
     public void ShouldUpdateBrand()
     {
-        // Given 
-        Brand brandToEdit = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-
-        _context.Brands.Add(brandToEdit);
-        _context.SaveChanges();
-
-        brandToEdit.BrandName = "Puma";
+        // Given
+        _brandAdidas.BrandName = "Puma";
 
         // When
-        IActionResult action = _brandController.Update(brandToEdit.IdBrand, brandToEdit).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Update(_brandAdidas.IdBrand, _brandAdidas).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Product editedBrandInDb = _context.Products.Find(brandToEdit.IdBrand);
+        Product editedBrandInDb = _context.Products.Find(_brandAdidas.IdBrand);
 
         Assert.IsNotNull(editedBrandInDb);
-        Assert.AreEqual(brandToEdit.BrandName, editedBrandInDb.ProductName);
+        Assert.AreEqual(_brandAdidas.BrandName, editedBrandInDb.ProductName);
     }
 
     [TestMethod]
     public void ShouldNotUpdateBrandBecauseIdInUrlIsDifferent()
     {
-        // Given 
-        Brand brandToEdit = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-
-        _context.Brands.Add(brandToEdit);
+        _context.Brands.Add(_brandNike);
         _context.SaveChanges();
 
-        brandToEdit.BrandName = "OnlyFan";
+        _brandNike.BrandName = "OnlyFan";
 
         // When
-        IActionResult action = _brandController.Update(0, brandToEdit).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Update(0, _brandNike).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
@@ -214,14 +177,8 @@ public class BrandControllerTest
     [TestMethod]
     public void ShouldNotUpdateBrandBecauseBrandDoesNotExist()
     {
-        // Given 
-        Brand produitToEdit = new Brand()
-        {
-            BrandName = "Adidas"
-        };
-
         // When
-        IActionResult action = _brandController.Update(produitToEdit.IdBrand, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Update(_brandNike.IdBrand, _brandNike).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
