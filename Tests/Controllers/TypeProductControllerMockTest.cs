@@ -55,11 +55,11 @@ namespace Tests.Controllers
             );
 
             // Création des marques et DTO réutilisables
-            _sampleTypeProduct = new TypeProduct { IdTypeProduct = 1, TypeProductName = "IKA" };
-            _anotherTypeProduct = new TypeProduct { IdTypeProduct = 2, TypeProductName = "Poltrone Et Sofa" };
+            _sampleTypeProduct = new TypeProduct { IdTypeProduct = 1, TypeProductName = "Wood Table" };
+            _anotherTypeProduct = new TypeProduct { IdTypeProduct = 2, TypeProductName = "Plastic Chair" };
 
-            _sampleTypeProductDTO = new TypeProductDTO { Id = 1, Name = "IKA" };
-            _anotherTypeProductDTO = new TypeProductDTO { Id = 2, Name = "Poltrone Et Sofa" };
+            _sampleTypeProductDTO = new TypeProductDTO { Id = 1, Name = "Wood Table" };
+            _anotherTypeProductDTO = new TypeProductDTO { Id = 2, Name = "Plastic Chair" };
 
             _typeProductList = new List<TypeProduct> { _sampleTypeProduct, _anotherTypeProduct };
             _typeProductDTOList = new List<TypeProductDTO> { _sampleTypeProductDTO, _anotherTypeProductDTO };
@@ -93,11 +93,14 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task Get_TypeProductDoesNotExist_ReturnsNotFound()
         {
+            // Arrange
             _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
-                                  .ReturnsAsync((TypeProduct?)null);
+                                          .ReturnsAsync((TypeProduct?)null);
 
+            // Act
             var result = await _controller.Get(99);
 
+            // Assert
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
         }
 
@@ -107,15 +110,18 @@ namespace Tests.Controllers
         [TestMethod]
         public async Task GetAll_ReturnsAllTypeProducts()
         {
+            // Arrange
             _typeProductRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(_typeProductList);
             _mapperMock.Setup(m => m.Map<IEnumerable<TypeProductDTO>>(_typeProductList))
                        .Returns(_typeProductDTOList);
 
+            // Act
             var result = await _controller.GetAll();
 
+            // Assert
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             CollectionAssert.AreEqual(_typeProductDTOList.ToList(),
-                                      ((OkObjectResult)result.Result).Value as List<TypeProductDTO>);
+                                                  ((OkObjectResult)result.Result).Value as List<TypeProductDTO>);
         }
 
         #endregion

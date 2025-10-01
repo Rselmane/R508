@@ -1,0 +1,100 @@
+﻿@page "/productEdit/{IdProduct:int?}"
+@using BlazorApp.Models
+@using Service
+@inject IService<Product> dataRepository
+@inject NavigationManager Navigation
+
+<h3>@(IsNew ? "Ajouter un produit" : "Modifier le produit")</h3>
+
+@if (isLoading)
+{
+    <p><em>Chargement...</em></p>
+}
+else
+{
+    <EditForm Model="product" OnValidSubmit="HandleValidSubmit" FormName="productForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="ProductName" class="form-label">Nom du produit</label>
+            <InputText id="ProductName" class="form-control" @bind-Value="product.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <InputTextArea id="Description" class="form-control" @bind-Value="product.Description" />
+        </div>
+
+        <div class="mb-3">
+            <label for="PhotoName" class="form-label">Nom de la photo</label>
+            <InputText id="PhotoName" class="form-control" @bind-Value="product.PhotoName" />
+        </div>
+
+        <div class="mb-3">
+            <label for="PhotoUri" class="form-label">Uri de la photo</label>
+            <InputText id="PhotoUri" class="form-control" @bind-Value="product.PhotoUri" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        @if (!IsNew)
+        {
+            <button type="button" class="btn btn-danger ms-2" @onclick="DeleteProduct">Supprimer</button>
+        }
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Retour">Annuler</button>
+    </EditForm>
+
+}
+
+@code {
+    [Parameter]
+    public int? IdProduct { get; set; }
+
+    private Product product = new();
+    private bool isLoading = true;
+    private bool IsNew => !IdProduct.HasValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsNew)
+        {
+            product = new Product();
+        }
+        else
+        {
+            var p = await dataRepository.GetByIdAsync(IdProduct.Value);
+            if (p != null)
+                product = p;
+            else
+                Navigation.NavigateTo("/products");
+        }
+        isLoading = false;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (IsNew)
+        {
+            await dataRepository.AddAsync(product);
+        }
+        else
+        {
+            await dataRepository.UpdateAsync(product);
+        }
+        Navigation.NavigateTo("/products");
+    }
+
+    private async Task DeleteProduct()
+    {
+        if (!IsNew)
+        {
+            await dataRepository.DeleteAsync(product.Id);
+        }
+        Navigation.NavigateTo("/products");
+    }
+
+    private void Retour()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}
