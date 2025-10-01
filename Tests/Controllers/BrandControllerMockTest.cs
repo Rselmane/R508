@@ -196,7 +196,7 @@ namespace Tests.Controllers
             _mapperMock.Setup(m => m.Map<BrandDTO>(_sampleBrand)).Returns(_sampleBrandDTO);
 
             // When : On appelle la méthode POST de l'API pour enregistrer la marque
-            var result = await _controller.Create(dto);
+            var result =  _controller.Create(dto).GetAwaiter().GetResult();
 
             // Then : La marque est bien enregistrée et le code renvoyé est CREATED (201)
             Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
