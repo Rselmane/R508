@@ -1,6 +1,6 @@
 ﻿namespace App.DTO
 {
-    public class BrandDTO
+    public partial class BrandDTO
     {
         public int Id { get; set; }
 
