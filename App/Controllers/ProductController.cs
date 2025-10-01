@@ -46,8 +46,8 @@ public class ProductController(
         if (products == null || !products.Any())
             return NotFound();
 
-        var dtos = mapper.Map<IEnumerable<ProductDTO>>(products);
-        return Ok(dtos);
+        var products_dto = mapper.Map<IEnumerable<ProductDTO>>(products);
+        return Ok(products_dto);
     }
 
     [HttpPost("create")]

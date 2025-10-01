@@ -172,7 +172,7 @@ namespace Tests.Controllers
             var result = await _controller.Create(dto);
 
             Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
-            var createdResult = (CreatedAtActionResult)result.Result;
+            CreatedAtActionResult createdResult = (CreatedAtActionResult)result.Result;
             Assert.AreEqual(_sampleBrandDTO, createdResult.Value);
         }
 
