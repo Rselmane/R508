@@ -31,6 +31,7 @@ public class Program
             cfg.AddProfile<App.Mapper.ProductMappingProfile>();
             cfg.AddProfile<App.Mapper.BrandMapper>();
             cfg.AddProfile<App.Mapper.TypeProductMapper>();
+            cfg.AddProfile<App.Mapper.BrandUpdateMapper>();
             // Add any other individual mapper profiles here
         });
 

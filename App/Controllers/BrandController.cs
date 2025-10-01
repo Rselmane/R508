@@ -51,7 +51,7 @@ public class BrandController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<BrandDTO>> Create([FromBody] BrandDTO dto)
+    public async Task<IActionResult> Create([FromBody] BrandDTO dto)
     {
         if (!ModelState.IsValid)
         {
@@ -74,18 +74,27 @@ public class BrandController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, [FromBody] Brand brand)
+    public async Task<IActionResult> Update(int id, [FromBody] BrandUpdateDTO brandDto)
     {
-        if (id != brand.IdBrand)
+        if (!ModelState.IsValid)
         {
-            return BadRequest();
+            return BadRequest(ModelState);
         }
-        ActionResult<Brand?> brandToUpdate = await manager.GetByIdAsync(id);
-        if (brandToUpdate.Value == null)
+
+        // Récupérer la marque existante
+        Brand? brandToUpdate = await manager.GetByIdAsync(id);
+
+        if (brandToUpdate == null)
         {
             return NotFound();
         }
-        await manager.UpdateAsync(brandToUpdate.Value, brand);
+
+        // Mapper le DTO vers une nouvelle entité Brand
+        Brand updatedBrand = mapper.Map<Brand>(brandDto);
+        updatedBrand.IdBrand = id; // Conserver l'ID
+
+        await manager.UpdateAsync(brandToUpdate, updatedBrand);
+
         return NoContent();
     }
 }
