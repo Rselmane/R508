@@ -7,7 +7,7 @@ namespace App.Models;
 [Table(("TypeProduct"))]
 [Index(nameof(IdTypeProduct), IsUnique = true)]
 [Index(nameof(TypeProductName), IsUnique = true)]
-public class TypeProduct
+public partial class TypeProduct
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

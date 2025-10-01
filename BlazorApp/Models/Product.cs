@@ -2,9 +2,22 @@ namespace BlazorApp.Models;
 
 public class Product
 {
-    public int IdProduct { get; set; }
-    public string ProductName { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public string PhotoName { get; set; } = null!;
-    public string PhotoUri { get; set; } = null!;
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Type { get; set; } = null!;
+    public string Brand { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+
+    public string? PhotoName { get; set; }
+
+
+    public string? PhotoUri { get; set; }
+
+
+    public int? Stock { get; set; }
+
+
+    public bool InRestocking { get; set; }
 }

@@ -3,7 +3,6 @@ using App.Models;
 using App.Models.EntityFramework;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Controllers;
 
@@ -22,7 +21,7 @@ public class BrandController(
     public async Task<ActionResult<BrandDTO?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result == null ? NotFound() : mapper.Map<BrandDTO>(result);
+        return result == null ? NotFound() : Ok(mapper.Map<BrandDTO>(result));
     }
 
     [HttpDelete("remove/{id}")]
@@ -42,8 +41,11 @@ public class BrandController(
     public async Task<ActionResult<IEnumerable<BrandDTO>>> GetAll()
     {
         var brands = await manager.GetAllAsync();
-        var brandDTOs = mapper.Map<IEnumerable<BrandDTO>>(brands);
-        return new ActionResult<IEnumerable<BrandDTO>>(brandDTOs);
+        if (brands == null || !brands.Any())
+            return NotFound();
+
+        var brands_dto = mapper.Map<IEnumerable<BrandDTO>>(brands);
+        return Ok(brands_dto);
     }
 
     [HttpPost("create")]
@@ -64,7 +66,7 @@ public class BrandController(
         await manager.AddAsync(brand);
 
         // Retourner le détail de la marque  créé
-        Brand BrandDetail = mapper.Map<Brand>(brand);
+        BrandDTO BrandDetail = mapper.Map<BrandDTO>(brand);
         return CreatedAtAction("Get", new { id = brand.IdBrand }, BrandDetail);
     }
 

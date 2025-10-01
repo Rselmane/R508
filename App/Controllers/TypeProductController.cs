@@ -21,7 +21,7 @@ public class TypeProductController(
     public async Task<ActionResult<TypeProductDTO?>> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
-        return result == null ? NotFound() : mapper.Map<TypeProductDTO>(result);
+        return result == null ? NotFound() : Ok(mapper.Map<TypeProductDTO>(result));
     }
 
     [HttpDelete("remove/{id}")]
@@ -41,8 +41,11 @@ public class TypeProductController(
     public async Task<ActionResult<IEnumerable<TypeProductDTO>>> GetAll()
     {
         var typesProduct = await manager.GetAllAsync();
-        var typeProductDTOs = mapper.Map<IEnumerable<TypeProductDTO>>(typesProduct);
-        return new ActionResult<IEnumerable<TypeProductDTO>>(typeProductDTOs);
+        if (typesProduct == null || !typesProduct.Any())
+            return NotFound();
+
+        var typesProduct_dto = mapper.Map<IEnumerable<TypeProductDTO>>(typesProduct);
+        return Ok(typesProduct_dto);
     }
 
     [HttpPost("create")]

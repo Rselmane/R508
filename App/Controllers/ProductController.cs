@@ -46,8 +46,8 @@ public class ProductController(
         if (products == null || !products.Any())
             return NotFound();
 
-        var dtos = mapper.Map<IEnumerable<ProductDTO>>(products);
-        return Ok(dtos);
+        var products_dto = mapper.Map<IEnumerable<ProductDTO>>(products);
+        return Ok(products_dto);
     }
 
     [HttpPost("create")]
@@ -66,11 +66,11 @@ public class ProductController(
         // Gestion de la marque
         if (!string.IsNullOrEmpty(dto.Marque))
         {
-            var marque = await context.Marques.FirstOrDefaultAsync(x => x.BrandName == dto.Marque);
+            var marque = await context.Brands.FirstOrDefaultAsync(x => x.BrandName == dto.Marque);
             if (marque == null)
             {
                 marque = new Brand { BrandName = dto.Marque };
-                context.Marques.Add(marque);
+                context.Brands.Add(marque);
                 await context.SaveChangesAsync();
             }
             produit.IdBrand = marque.IdBrand;
@@ -79,11 +79,11 @@ public class ProductController(
         // Gestion du type produit
         if (!string.IsNullOrEmpty(dto.TypeProduit))
         {
-            var typeProduit = await context.TypeProduits.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduit);
+            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduit);
             if (typeProduit == null)
             {
                 typeProduit = new TypeProduct { TypeProductName = dto.TypeProduit };
-                context.TypeProduits.Add(typeProduit);
+                context.TypeProducts.Add(typeProduit);
                 await context.SaveChangesAsync();
             }
             produit.IdTypeProduct = typeProduit.IdTypeProduct;

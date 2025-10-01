@@ -50,7 +50,7 @@ public class ProductControllerTest
             PhotoName = "Une superbe chaise bleu",
             PhotoUri = "https://ikea.fr/chaise.jpg"
         };
-        _context.Produits.Add(produitInDb);
+        _context.Products.Add(produitInDb);
         _context.SaveChanges();
 
         // When : J'appelle la méthode get de mon api pour récupérer le produit
@@ -75,7 +75,7 @@ public class ProductControllerTest
             PhotoUri = "https://ikea.fr/chaise.jpg"
         };
 
-        _context.Produits.Add(produitInDb);
+        _context.Products.Add(produitInDb);
         _context.SaveChanges();
 
         // When : Je souhaite supprimé un produit depuis l'API
@@ -84,7 +84,7 @@ public class ProductControllerTest
         // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
-        Assert.IsNull(_context.Produits.Find(produitInDb.IdProduct));
+        Assert.IsNull(_context.Products.Find(produitInDb.IdProduct));
     }
 
     [TestMethod]
@@ -128,7 +128,7 @@ public class ProductControllerTest
             }
         ];
 
-        _context.Produits.AddRange(productInDb);
+        _context.Products.AddRange(productInDb);
         _context.SaveChanges();
 
         // When : On souhaite récupérer tous les produits
@@ -169,7 +169,7 @@ public class ProductControllerTest
         var createdResult = (CreatedAtActionResult)action.Result;
         var createdDto = (ProductDetailDTO)createdResult.Value;
 
-        Product productInDb = _context.Produits.Find(createdDto.Name);  // pas sûr de ça 
+        Product productInDb = _context.Products.Find(createdDto.Name);  // pas sûr de ça 
 
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
@@ -189,7 +189,7 @@ public class ProductControllerTest
             PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
-        _context.Produits.Add(produitToEdit);
+        _context.Products.Add(produitToEdit);
         _context.SaveChanges();
 
         produitToEdit.ProductName = "Lit";
@@ -202,7 +202,7 @@ public class ProductControllerTest
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Product editedProductInDb = _context.Produits.Find(produitToEdit.IdProduct);
+        Product editedProductInDb = _context.Products.Find(produitToEdit.IdProduct);
 
         Assert.IsNotNull(editedProductInDb);
         Assert.AreEqual(produitToEdit.ProductName, editedProductInDb.ProductName);
@@ -221,7 +221,7 @@ public class ProductControllerTest
             PhotoUri = "https://ikea.fr/bureau.jpg"
         };
 
-        _context.Produits.Add(produitToEdit);
+        _context.Products.Add(produitToEdit);
         _context.SaveChanges();
 
         produitToEdit.ProductName = "Lit";
@@ -259,7 +259,7 @@ public class ProductControllerTest
     [TestCleanup]
     public void Cleanup()
     {
-        _context.Produits.RemoveRange(_context.Produits);
+        _context.Products.RemoveRange(_context.Products);
         _context.SaveChanges();
     }
 }

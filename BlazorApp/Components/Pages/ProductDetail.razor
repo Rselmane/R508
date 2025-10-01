@@ -1,0 +1,46 @@
+﻿@page "/ProductDetail/{Id:int}"
+@using Models
+@inject Service.IService<Product> dataRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Détails Product</PageTitle>
+
+<h1>Détails du Product</h1>
+
+@if (product == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else
+{
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@product.Name</h5>
+            <p class="card-text"><strong>Type :</strong> @product.Type</p>
+            <p class="card-text"><strong>Marque :</strong> @product.Brand</p>
+            <p class="card-text"><strong>Description :</strong> @product.Description</p>
+            <p class="card-text"><strong>Stock :</strong> @(product.Stock ?? 0)</p>
+            <p class="card-text"><strong>En réappro :</strong> @(product.InRestocking ? "Oui" : "Non")</p>
+            <img src="@product.PhotoUri" alt="@product.PhotoName" style="max-width:300px" />
+            <br />
+            <button class="btn btn-primary mt-2" @onclick="RetourListe">Retour à la liste</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Product? product;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await dataRepository.GetByIdAsync(Id);
+    }
+
+    private void RetourListe()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}

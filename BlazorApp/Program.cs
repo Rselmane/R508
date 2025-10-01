@@ -1,10 +1,14 @@
 using BlazorApp.Components;
+using BlazorApp.Service;
+using BlazorApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IService<Product>, WebService>();
 
 var app = builder.Build();
 
