@@ -10,6 +10,7 @@ using Tests.AutoMapper;
 
 namespace Tests.Mapping;
 
+[TestClass]
 public class ProductMappingTests : AutoMapperConfigTests
 {
     [TestMethod]
