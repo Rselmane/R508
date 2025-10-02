@@ -46,7 +46,6 @@ public class WebService<TEntity> : IService<TEntity> where TEntity : class
 
     public async Task UpdateAsync(TEntity updatedEntity)
     {
-        // Using reflection to get Id property (assumes all entities have an Id)
         var idProp = typeof(TEntity).GetProperty("Id");
         if (idProp == null) throw new InvalidOperationException("Entity must have an Id property");
 
