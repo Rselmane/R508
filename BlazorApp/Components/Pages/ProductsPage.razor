@@ -15,7 +15,7 @@ else if (!productList.Any())
 }
 else
 {
-    <table class="table">
+    <table class="table" id="productTable">
         <thead>
             <tr>
                 <th>IdProduit</th>
@@ -27,9 +27,9 @@ else
         <tbody>
             @foreach (var product in productList)
             {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
+                <tr class="productRow">
+                    <td class="productID">@product.Id</td>
+                    <td class="productName">@product.Name</td>
                     <td>
                         <NavLink class="btn btn-link" href="@($"/ProductDetail/{product.Id}")">Voir détails</NavLink>
                     </td>
