@@ -1,4 +1,4 @@
-﻿@page "/productEdit/{IdProduct:int?}"
+﻿@page "/productAdd"
 @rendermode InteractiveServer
 @using BlazorApp.Models
 @using Service
@@ -43,8 +43,8 @@ else
 
         <!-- Stock réel -->
         <div class="mb-3">
-            <label for="RealStock" class="form-label">Stock réel</label>
-            <InputNumber id="RealStock" class="form-control" @bind-Value="product.RealStock" />
+            <label for="Stock" class="form-label">Stock réel</label>
+            <InputNumber id="Stock" class="form-control" @bind-Value="product.Stock" />
         </div>
 
         <!-- Stock minimum -->

@@ -12,7 +12,7 @@ namespace App.DTO
                    Description == dTO.Description&&
                    PhotoName == dTO.PhotoName&&
                    PhotoUri == dTO.PhotoUri&&
-                   RealStock == dTO.RealStock&&
+                   Stock == dTO.Stock&&
                    MinStock == dTO.MinStock&&
                    MaxStock == dTO.MaxStock&&
                    Brand == dTO.Brand&&
@@ -24,13 +24,13 @@ namespace App.DTO
             HashCode hash = new HashCode();
             hash.Add(Name);
             hash.Add(Description);
-            hash.Add(NomPhoto);
-            hash.Add(UriPhoto);
-            hash.Add(StockReel);
-            hash.Add(StockMin);
-            hash.Add(StockMax);
-            hash.Add(Marque);
-            hash.Add(TypeProduit);
+            hash.Add(PhotoName);
+            hash.Add(PhotoUri);
+            hash.Add(Stock);
+            hash.Add(MinStock);
+            hash.Add(MaxStock);
+            hash.Add(Brand);
+            hash.Add(Type);
             return hash.ToHashCode();
         }
     }

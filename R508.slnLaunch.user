@@ -5,7 +5,7 @@
       {
         "Path": "App\\App.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "http"
       },
       {
         "Path": "BlazorApp\\BlazorApp.csproj",

@@ -1,6 +1,6 @@
 namespace BlazorApp.Models;
 
-public class TypeProduct
+public class Type
 {
     public int Id { get; set; }
 

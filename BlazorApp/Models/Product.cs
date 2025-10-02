@@ -11,7 +11,6 @@ public class Product
     public string? PhotoUri { get; set; }
     public int? Stock { get; set; }
     public bool InRestocking { get; set; }
-    public int RealStock { get; set; }
     public int MinStock { get; set; }
     public int MaxStock { get; set; }
 }

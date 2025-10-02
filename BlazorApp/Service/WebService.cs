@@ -6,7 +6,7 @@ public class WebService : IService<Product>
 {
     private readonly HttpClient httpClient = new() 
     { 
-        BaseAddress = new Uri("https://localhost:7008/api/") 
+        BaseAddress = new Uri("http://localhost:5128/api/") 
     };
 
     public async Task AddAsync(Product product)
