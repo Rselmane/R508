@@ -1,4 +1,6 @@
 ﻿
+
+
 namespace App.DTO
 {
     public partial class ProductAddDTO
@@ -6,29 +8,29 @@ namespace App.DTO
         public override bool Equals(object? obj)
         {
             return obj is ProductAddDTO dTO &&
-                   Nom == dTO.Nom &&
+                   Name == dTO.Name &&
                    Description == dTO.Description &&
-                   NomPhoto == dTO.NomPhoto &&
-                   UriPhoto == dTO.UriPhoto &&
-                   StockReel == dTO.StockReel &&
-                   StockMin == dTO.StockMin &&
-                   StockMax == dTO.StockMax &&
-                   Marque == dTO.Marque &&
-                   TypeProduit == dTO.TypeProduit;
+                   PhotoName == dTO.PhotoName &&
+                   PhotoUri == dTO.PhotoUri &&
+                   RealStock == dTO.RealStock &&
+                   MinStock == dTO.MinStock &&
+                   MaxStock == dTO.MaxStock &&
+                   Brand == dTO.Brand &&
+                   TypeProduct == dTO.TypeProduct;
         }
 
         public override int GetHashCode()
         {
             HashCode hash = new HashCode();
-            hash.Add(Nom);
+            hash.Add(Name);
             hash.Add(Description);
-            hash.Add(NomPhoto);
-            hash.Add(UriPhoto);
-            hash.Add(StockReel);
-            hash.Add(StockMin);
-            hash.Add(StockMax);
-            hash.Add(Marque);
-            hash.Add(TypeProduit);
+            hash.Add(PhotoName);
+            hash.Add(PhotoUri);
+            hash.Add(RealStock);
+            hash.Add(MinStock);
+            hash.Add(MaxStock);
+            hash.Add(Brand);
+            hash.Add(TypeProduct);
             return hash.ToHashCode();
         }
     }

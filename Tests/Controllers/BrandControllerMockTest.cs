@@ -189,7 +189,7 @@ namespace Tests.Controllers
         public void Create_ValidBrand_ReturnsCreatedAtAction()
         {
             // Given : Une marque à enregistrer
-            var dto = new BrandDTO { Name = "IKA" };
+            BrandUpdateDTO dto = new BrandUpdateDTO { Name = "IKA" };
 
             _mapperMock.Setup(m => m.Map<Brand>(dto)).Returns(_sampleBrand);
             _brandRepositoryMock.Setup(r => r.AddAsync(_sampleBrand)).ReturnsAsync(_sampleBrand);
@@ -216,7 +216,7 @@ namespace Tests.Controllers
             _controller.ModelState.AddModelError("Name", "Required");
 
             // When : On appelle la méthode POST avec un DTO invalide
-            var result = _controller.Create(new BrandDTO()).GetAwaiter().GetResult();
+            var result = _controller.Create(new BrandUpdateDTO()).GetAwaiter().GetResult();
 
             // Then : L'API renvoie BAD_REQUEST (400)
             Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));

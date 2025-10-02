@@ -39,6 +39,6 @@ public class WebService : IService<Product>
 
     public async Task UpdateAsync(Product updatedProduct)
     {
-        await httpClient.PutAsJsonAsync<Product>($"products/update/{updatedProduct.Id}", updatedProduct);
+        await httpClient.PutAsJsonAsync<Product>($"product/update/{updatedProduct.Id}", updatedProduct);
     }
 }

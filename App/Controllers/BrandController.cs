@@ -51,7 +51,7 @@ public class BrandController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] BrandDTO dto)
+    public async Task<IActionResult> Create([FromBody] BrandUpdateDTO dto)
     {
         if (!ModelState.IsValid)
         {

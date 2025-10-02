@@ -37,6 +37,18 @@ else
             <InputText id="PhotoUri" class="form-control" @bind-Value="product.PhotoUri" />
         </div>
 
+        <div class="mb-3">
+            <label for="Brand" class="form-label">Marque</label>
+            <InputText id="Brand" class="form-control" @bind-Value="product.Brand" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Type" class="form-label">Type</label>
+            <InputText id="Type" class="form-control" @bind-Value="product.Type" />
+        </div>
+
+
+
         <button type="submit" class="btn btn-primary">Enregistrer</button>
         @if (!IsNew)
         {
