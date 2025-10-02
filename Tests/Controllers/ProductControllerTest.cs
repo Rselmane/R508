@@ -216,10 +216,10 @@ public class ProductControllerTest : AutoMapperConfigTests
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        _context.Products.RemoveRange(_context.Products);
-        _context.SaveChanges();
-    }
+    //[TestCleanup]
+    //public void Cleanup()
+    //{
+    //    _context.Products.RemoveRange(_context.Products);
+    //    _context.SaveChanges();
+    //}
 }

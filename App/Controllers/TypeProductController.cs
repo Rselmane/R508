@@ -51,7 +51,7 @@ public class TypeProductController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] TypeProductDTO dto)
+    public async Task<IActionResult> Create([FromBody] TypeProductUpdateDTO dto)
     {
         if (!ModelState.IsValid)
         {
