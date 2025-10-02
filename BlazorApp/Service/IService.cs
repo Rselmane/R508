@@ -9,5 +9,5 @@ public interface IService<TEntity>
     Task AddAsync(TEntity entity);
     Task UpdateAsync(TEntity updatedEntity);
     Task DeleteAsync(int id);
-    Task<Product?> GetByNameAsync(string name);
+    Task<TEntity?> GetByNameAsync(string name);
 }
