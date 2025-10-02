@@ -5,10 +5,10 @@ namespace BlazorApp.ViewModel
 {
     internal sealed partial class ProductsPageViewModel : ObservableObject
     {
-        private readonly WebService _service;
-        public ProductsPageViewModel(WebService service) 
-        {
-            _service = service;
-        }
+        //private readonly webservice _service;
+        //public productspageviewmodel(webservice service) 
+        //{
+        //    _service = service;
+        //}
     }
 }
