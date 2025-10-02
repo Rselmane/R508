@@ -1,0 +1,117 @@
+﻿@page "/productEdit/{IdProduct:int?}"
+@rendermode InteractiveServer
+@using BlazorApp.Models
+@using Service
+@inject IService<Product> dataRepository
+@inject NavigationManager Navigation
+
+<h3>@(IdProduct.HasValue ? "Modifier un produit" : "Ajouter un produit")</h3>
+
+@if (isLoading)
+{
+    <p><em>Chargement...</em></p>
+}
+else
+{
+    <EditForm Model="product" OnValidSubmit="HandleValidSubmit" FormName="productForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <!-- Nom -->
+        <div class="mb-3">
+            <label for="ProductName" class="form-label">Nom du produit</label>
+            <InputText id="ProductName" class="form-control" @bind-Value="product.Name" />
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <InputTextArea id="Description" class="form-control" @bind-Value="product.Description" />
+        </div>
+
+        <!-- Nom de la photo -->
+        <div class="mb-3">
+            <label for="PhotoName" class="form-label">Nom de la photo</label>
+            <InputText id="PhotoName" class="form-control" @bind-Value="product.PhotoName" />
+        </div>
+
+        <!-- Uri de la photo -->
+        <div class="mb-3">
+            <label for="PhotoUri" class="form-label">URI de la photo</label>
+            <InputText id="PhotoUri" class="form-control" @bind-Value="product.PhotoUri" />
+        </div>
+
+        <!-- Stock réel -->
+        <div class="mb-3">
+            <label for="RealStock" class="form-label">Stock réel</label>
+            <InputNumber id="RealStock" class="form-control" @bind-Value="product.RealStock" />
+        </div>
+
+        <!-- Stock minimum -->
+        <div class="mb-3">
+            <label for="MinStock" class="form-label">Stock minimum</label>
+            <InputNumber id="MinStock" class="form-control" @bind-Value="product.MinStock" />
+        </div>
+
+        <!-- Stock maximum -->
+        <div class="mb-3">
+            <label for="MaxStock" class="form-label">Stock maximum</label>
+            <InputNumber id="MaxStock" class="form-control" @bind-Value="product.MaxStock" />
+        </div>
+
+        <!-- Marque -->
+        <div class="mb-3">
+            <label for="Brand" class="form-label">Marque</label>
+            <InputText id="Brand" class="form-control" @bind-Value="product.Brand" />
+        </div>
+
+        <!-- Type -->
+        <div class="mb-3">
+            <label for="Type" class="form-label">Type</label>
+            <InputText id="Type" class="form-control" @bind-Value="product.Type" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Retour">Annuler</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int? IdProduct { get; set; }
+
+    private Product product = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IdProduct.HasValue)
+        {
+            var existingProduct = await dataRepository.GetByIdAsync(IdProduct.Value);
+            if (existingProduct != null)
+            {
+                product = existingProduct;
+            }
+        }
+        isLoading = false;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (IdProduct.HasValue)
+        {
+            await dataRepository.UpdateAsync(product);
+        }
+        else
+        {
+            await dataRepository.AddAsync(product);
+        }
+
+        Navigation.NavigateTo("/products");
+    }
+
+    private void Retour()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}

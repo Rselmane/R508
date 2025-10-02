@@ -10,7 +10,7 @@
       {
         "Path": "BlazorApp\\BlazorApp.csproj",
         "Action": "Start",
-        "DebugTarget": "https"
+        "DebugTarget": "http"
       }
     ]
   }
