@@ -16,9 +16,9 @@ public class TypeProductMappingTests : AutoMapperConfigTests
     [TestMethod]
     public void TypeProductDTO_To_TypeProduct_Should_Map_Correctly()
     {
-        var dto = new TypeProductDTO { Id = 20, Name = "T-shirt" };
+        TypeProductDTO dto = new TypeProductDTO { Id = 20, Name = "T-shirt" };
 
-        var type = _mapper.Map<TypeProduct>(dto);
+        TypeProduct type = _mapper.Map<TypeProduct>(dto);
 
         Assert.AreEqual(dto.Id, type.IdTypeProduct);
         Assert.AreEqual(dto.Name, type.TypeProductName);
@@ -28,9 +28,9 @@ public class TypeProductMappingTests : AutoMapperConfigTests
     [TestMethod]
     public void TypeProduct_To_TypeProductDTO_Should_Map_Correctly()
     {
-        var type = new TypeProduct { IdTypeProduct = 10, TypeProductName = "Chaussure" };
+        TypeProduct type = new TypeProduct { IdTypeProduct = 10, TypeProductName = "Chaussure" };
 
-        var dto = _mapper.Map<TypeProductDTO>(type);
+        TypeProductDTO dto = _mapper.Map<TypeProductDTO>(type);
 
         Assert.AreEqual(type.IdTypeProduct, dto.Id);
         Assert.AreEqual(type.TypeProductName, dto.Name);

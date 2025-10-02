@@ -18,7 +18,7 @@ public class TypeProductController(
     [HttpGet("type_product/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TypeProductDTO?>> Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
         return result == null ? NotFound() : Ok(mapper.Map<TypeProductDTO>(result));
@@ -51,7 +51,7 @@ public class TypeProductController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<TypeProductDTO>> Create([FromBody] TypeProductDTO dto)
+    public async Task<IActionResult> Create([FromBody] TypeProductDTO dto)
     {
         if (!ModelState.IsValid)
         {
@@ -74,18 +74,23 @@ public class TypeProductController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, [FromBody] TypeProduct typeProduct)
-    {
-        if (id != typeProduct.IdTypeProduct)
-        {
-            return BadRequest();
-        }
-        ActionResult<TypeProduct?> typeProductToUpdate = await manager.GetByIdAsync(id);
-        if (typeProductToUpdate.Value == null)
+    public async Task<IActionResult> Update(int id, [FromBody] TypeProductUpdateDTO typeProductDTO)
+    { // Récupérer le type de produit  existante
+
+        TypeProduct? TypeProductToUpdate = await manager.GetByIdAsync(id);
+
+        if (TypeProductToUpdate == null)
         {
             return NotFound();
         }
-        await manager.UpdateAsync(typeProductToUpdate.Value, typeProduct);
+
+        // Mapper le DTO vers une nouvelle entité TypeProduct
+        TypeProduct updatedTypeProduct = mapper.Map<TypeProduct>(typeProductDTO);
+        updatedTypeProduct.IdTypeProduct = id; // Conserver l'ID
+
+        await manager.UpdateAsync(TypeProductToUpdate, updatedTypeProduct);
+
         return NoContent();
+
     }
 }

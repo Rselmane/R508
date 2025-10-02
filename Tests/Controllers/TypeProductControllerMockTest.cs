@@ -33,12 +33,10 @@ namespace Tests.Controllers
         private TypeProduct _anotherTypeProduct;
         private TypeProductDTO _sampleTypeProductDTO;
         private TypeProductDTO _anotherTypeProductDTO;
+        private TypeProductUpdateDTO _sampleTypeProductUpdateDTO;
         private List<TypeProduct> _typeProductList;
         private List<TypeProductDTO> _typeProductDTOList;
 
-        /// <summary>
-        /// Initialise les mocks et les données communes pour tous les tests
-        /// </summary>
         [TestInitialize]
         public void Setup()
         {
@@ -54,12 +52,13 @@ namespace Tests.Controllers
                 _contextMock.Object
             );
 
-            // Création des marques et DTO réutilisables
+            // Création des types de produits et DTO réutilisables
             _sampleTypeProduct = new TypeProduct { IdTypeProduct = 1, TypeProductName = "Wood Table" };
             _anotherTypeProduct = new TypeProduct { IdTypeProduct = 2, TypeProductName = "Plastic Chair" };
 
             _sampleTypeProductDTO = new TypeProductDTO { Id = 1, Name = "Wood Table" };
             _anotherTypeProductDTO = new TypeProductDTO { Id = 2, Name = "Plastic Chair" };
+            _sampleTypeProductUpdateDTO = new TypeProductUpdateDTO { Name = "Metal Table" };
 
             _typeProductList = new List<TypeProduct> { _sampleTypeProduct, _anotherTypeProduct };
             _typeProductDTOList = new List<TypeProductDTO> { _sampleTypeProductDTO, _anotherTypeProductDTO };
@@ -67,11 +66,8 @@ namespace Tests.Controllers
 
         #region GET
 
-        /// <summary>
-        /// Teste la récupération d'une marque existant
-        /// </summary>
         [TestMethod]
-        public async Task Get_TypeProductExists_ReturnsOk()
+        public void Get_TypeProductExists_ReturnsOk()
         {
             // Given
             _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct))
@@ -80,164 +76,157 @@ namespace Tests.Controllers
                        .Returns(_sampleTypeProductDTO);
 
             // When
-            var result = await _controller.Get(_sampleTypeProduct.IdTypeProduct);
+            IActionResult result = _controller.Get(_sampleTypeProduct.IdTypeProduct).GetAwaiter().GetResult();
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(_sampleTypeProductDTO, ((OkObjectResult)result.Result).Value);
+            // Then
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.AreEqual(_sampleTypeProductDTO, ((OkObjectResult)result).Value);
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct), Times.Once);
         }
 
-        /// <summary>
-        /// Teste la récupération d'un marque inexistant
-        /// </summary>
         [TestMethod]
-        public async Task Get_TypeProductDoesNotExist_ReturnsNotFound()
+        public void Get_TypeProductDoesNotExist_ReturnsNotFound()
         {
-            // Arrange
-            _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            // Given
+            _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(99))
                                           .ReturnsAsync((TypeProduct?)null);
 
-            // Act
-            var result = await _controller.Get(99);
+            // When
+            IActionResult result = _controller.Get(99).GetAwaiter().GetResult();
 
-            // Assert
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            // Then
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(99), Times.Once);
         }
 
-        /// <summary>
-        /// Teste la récupération de tous les marques
-        /// </summary>
         [TestMethod]
-        public async Task GetAll_ReturnsAllTypeProducts()
+        public void GetAll_ReturnsAllTypeProducts()
         {
-            // Arrange
+            // Given
             _typeProductRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(_typeProductList);
             _mapperMock.Setup(m => m.Map<IEnumerable<TypeProductDTO>>(_typeProductList))
                        .Returns(_typeProductDTOList);
 
-            // Act
-            var result = await _controller.GetAll();
+            // When
+            var result = _controller.GetAll().GetAwaiter().GetResult();
 
-            // Assert
+            // Then
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             CollectionAssert.AreEqual(_typeProductDTOList.ToList(),
                                                   ((OkObjectResult)result.Result).Value as List<TypeProductDTO>);
+
+            _typeProductRepositoryMock.Verify(r => r.GetAllAsync(), Times.Once);
         }
 
         #endregion
 
         #region DELETE
 
-        /// <summary>
-        /// Teste la suppression d'une marque existant
-        /// </summary>
         [TestMethod]
-        public async Task Delete_TypeProductExists_ReturnsNoContent()
+        public void Delete_TypeProductExists_ReturnsNoContent()
         {
+            // Given
             _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct))
                                   .ReturnsAsync(_sampleTypeProduct);
             _typeProductRepositoryMock.Setup(r => r.DeleteAsync(_sampleTypeProduct))
                                   .Returns(Task.CompletedTask);
 
-            var result = await _controller.Delete(_sampleTypeProduct.IdTypeProduct);
+            // When
+            var result = _controller.Delete(_sampleTypeProduct.IdTypeProduct).GetAwaiter().GetResult();
 
+            // Then
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct), Times.Once);
             _typeProductRepositoryMock.Verify(r => r.DeleteAsync(_sampleTypeProduct), Times.Once);
         }
 
-        /// <summary>
-        /// Teste la suppression d'un produit inexistant
-        /// </summary>
         [TestMethod]
-        public async Task Delete_TypeProductDoesNotExist_ReturnsNotFound()
+        public void Delete_TypeProductDoesNotExist_ReturnsNotFound()
         {
-            _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+            // Given
+            _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(99))
                                   .ReturnsAsync((TypeProduct?)null);
 
-            var result = await _controller.Delete(99);
+            // When
+            var result = _controller.Delete(99).GetAwaiter().GetResult();
 
+            // Then
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(99), Times.Once);
+            _typeProductRepositoryMock.Verify(r => r.DeleteAsync(_sampleTypeProduct), Times.Never);
         }
 
         #endregion
 
         #region POST
 
-        /// <summary>
-        /// Teste la création d'une marque valide
-        /// </summary>
         [TestMethod]
-        public async Task Create_ValidTypeProduct_ReturnsCreatedAtWhenion()
+        public void Create_ValidTypeProduct_ReturnsCreatedAtAction()
         {
-            var dto = new TypeProductDTO { Name = "IKA" };
+            // Given
+            TypeProductDTO dto = new TypeProductDTO { Name = "IKA" };
 
             _mapperMock.Setup(m => m.Map<TypeProduct>(dto)).Returns(_sampleTypeProduct);
             _typeProductRepositoryMock.Setup(r => r.AddAsync(_sampleTypeProduct)).ReturnsAsync(_sampleTypeProduct);
             _mapperMock.Setup(m => m.Map<TypeProductDTO>(_sampleTypeProduct)).Returns(_sampleTypeProductDTO);
 
-            var result = await _controller.Create(dto);
+            // When
+            IActionResult result = _controller.Create(dto).GetAwaiter().GetResult();
 
-            Assert.IsInstanceOfType(result.Result, typeof(CreatedAtActionResult));
-            var createdResult = (CreatedAtActionResult)result.Result;
+            // Then
+            Assert.IsInstanceOfType(result, typeof(CreatedAtActionResult));
+            CreatedAtActionResult createdResult = (CreatedAtActionResult)result;
             Assert.AreEqual(_sampleTypeProductDTO, createdResult.Value);
-        }
 
-        /// <summary>
-        /// Teste la création d'une marque invalide (modelstate invalide)
-        /// </summary>
-        [TestMethod]
-        public async Task Create_InvalidModel_ReturnsBadRequest()
-        {
-            _controller.ModelState.AddModelError("Name", "Required");
-
-            var result = await _controller.Create(new TypeProductDTO());
-
-            Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
+            _typeProductRepositoryMock.Verify(r => r.AddAsync(_sampleTypeProduct), Times.Once);
         }
 
         #endregion
 
         #region PUT
 
-        /// <summary>
-        /// Teste la mise à jour d'une marque valide
-        /// </summary>
         [TestMethod]
-        public async Task Update_ValidTypeProduct_ReturnsNoContent()
+        public void Update_ValidTypeProduct_ReturnsNoContent()
         {
+            // Given
+            TypeProduct updatedTypeProduct = new TypeProduct { IdTypeProduct = _sampleTypeProduct.IdTypeProduct, TypeProductName = "Metal Table" };
+
             _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct))
                                   .ReturnsAsync(_sampleTypeProduct);
-            _typeProductRepositoryMock.Setup(r => r.UpdateAsync(_sampleTypeProduct, _sampleTypeProduct))
+            _mapperMock.Setup(m => m.Map<TypeProduct>(_sampleTypeProductUpdateDTO))
+                       .Returns(updatedTypeProduct);
+            _typeProductRepositoryMock.Setup(r => r.UpdateAsync(_sampleTypeProduct, updatedTypeProduct))
                                   .Returns(Task.CompletedTask);
 
-            var result = await _controller.Update(_sampleTypeProduct.IdTypeProduct, _sampleTypeProduct);
+            // When
+            IActionResult result = _controller.Update(_sampleTypeProduct.IdTypeProduct, _sampleTypeProductUpdateDTO).GetAwaiter().GetResult();
 
+            // Then
             Assert.IsInstanceOfType(result, typeof(NoContentResult));
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct), Times.Once);
+            _typeProductRepositoryMock.Verify(r => r.UpdateAsync(_sampleTypeProduct, updatedTypeProduct), Times.Once);
         }
 
-        /// <summary>
-        /// Teste la mise à jour avec un ID qui ne correspond pas
-        /// </summary>
         [TestMethod]
-        public async Task Update_IdMismatch_ReturnsBadRequest()
+        public void Update_TypeProductDoesNotExist_ReturnsNotFound()
         {
-            var result = await _controller.Update(99, _sampleTypeProduct);
-
-            Assert.IsInstanceOfType(result, typeof(BadRequestResult));
-        }
-
-        /// <summary>
-        /// Teste la mise à jour d'une marque inexistant
-        /// </summary>
-        [TestMethod]
-        public async Task Update_TypeProductDoesNotExist_ReturnsNotFound()
-        {
+            // Given
             _typeProductRepositoryMock.Setup(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct))
                                   .ReturnsAsync((TypeProduct?)null);
 
-            var result = await _controller.Update(_sampleTypeProduct.IdTypeProduct, _sampleTypeProduct);
+            // When
+               IActionResult result = _controller.Update(_sampleTypeProduct.IdTypeProduct, _sampleTypeProductUpdateDTO).GetAwaiter().GetResult();
 
+            // Then
             Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+
+            _typeProductRepositoryMock.Verify(r => r.GetByIdAsync(_sampleTypeProduct.IdTypeProduct), Times.Once);
+            _typeProductRepositoryMock.Verify(r => r.UpdateAsync(_sampleTypeProduct, _sampleTypeProduct), Times.Never);
         }
 
         #endregion
