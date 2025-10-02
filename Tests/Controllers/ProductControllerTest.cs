@@ -7,102 +7,135 @@ using App.Models.Repository;
 using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using Tests.AutoMapper;
 
 namespace Tests.Controllers;
 
 [TestClass]
 [TestSubject(typeof(ProductController))]
 [TestCategory("integration")]
-public class ProductControllerTest
+public class ProductControllerTest : AutoMapperConfigTests
 {
-    private readonly AppDbContext _context;
-    private readonly ProductController _productController;
-    private readonly MapperConfiguration _config;
+    private AppDbContext _context;
+    private ProductController _productController;
 
-    public ProductControllerTest()
+    // Objets communs pour les tests
+    private Product _productChaise;
+    private Product _productArmoir;
+    private Product _productBureau;
+    private ProductAddDTO _productAddChaise;
+    private ProductAddDTO _productUpdateLit;
+
+    [TestInitialize]
+    public void Initialize()
     {
-        _context = new AppDbContext();
+        // Configuration pour récupérer la connection string
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false)
+            .Build();
 
-        _config = new MapperConfiguration(cfg =>
-        {
-            cfg.AddProfile<ProductMapper>();
-            cfg.AddProfile<ProductDetailMapper>();
-        }, new LoggerFactory());
+        // Configuration du contexte avec PostgreSQL
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(configuration.GetConnectionString("SeriesDbContextRemote"))
+            .Options;
 
-        _config.AssertConfigurationIsValid();
-        IMapper mapper = _config.CreateMapper();
+        _context = new AppDbContext(options);
+
+        IMapper mapper = _mapper;
 
         IProductRepository manager = new ProductManager(_context);
         _productController = new ProductController(mapper, manager, _context);
+
+        // Données communes : entities
+        _productChaise = new Product()
+        {
+            ProductName = "Chaise",
+            Description = "Une superbe chaise",
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
+        };
+
+        _productArmoir = new Product()
+        {
+            ProductName = "Armoir",
+            Description = "Une superbe armoire",
+            PhotoName = "Une superbe armoire jaune",
+            PhotoUri = "https://ikea.fr/armoire-jaune.jpg"
+        };
+
+        _productBureau = new Product()
+        {
+            ProductName = "Bureau",
+            Description = "Un super bureau",
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
+        };
+
+        // DTOs
+        _productAddChaise = new ProductAddDTO()
+        {
+            Name = "Chaise",
+            Description = "Une superbe chaise",
+            PhotoName = "Une superbe chaise bleu",
+            PhotoUri = "https://ikea.fr/chaise.jpg"
+        };
+
+        _productUpdateLit = new ProductAddDTO()
+        {
+            Name = "Lit",
+            Description = "Un super lit",
+            PhotoName = "Un super bureau bleu",
+            PhotoUri = "https://ikea.fr/bureau.jpg"
+        };
     }
 
     [TestMethod]
     public void ShouldGetProduct()
     {
-        // Given : un produit en base de donnée
-        Product produitInDb = new Product()
-        {
-            ProductName = "Chaise",
-            Description = "Une superbe chaise",
-            PhotoName = "Une superbe chaise bleu",
-            PhotoUri = "https://ikea.fr/chaise.jpg"
-        };
-        _context.Products.Add(produitInDb);
+        // Given
+        _context.Products.Add(_productChaise);
         _context.SaveChanges();
 
-        // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<ProductDetailDTO> action = _productController.Get(produitInDb.IdProduct).GetAwaiter().GetResult();
+        // When
+       IActionResult action = _productController.Get(_productChaise.IdProduct).GetAwaiter().GetResult();
 
-        // Then : On récupère le produit et le code de retour est 200
+        // Then
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(ProductDetailDTO));
-        ProductDetailDTO returnProduct = action.Value; // 
-        Assert.AreEqual(produitInDb.ProductName, returnProduct.Name);
+        Assert.IsInstanceOfType(action, typeof(ProductDetailDTO));
+        ProductDetailDTO returnProduct =(ProductDetailDTO) action;
+        Assert.AreEqual(_productChaise.ProductName, returnProduct.Name);
     }
 
     [TestMethod]
     public void ShouldDeleteProduct()
     {
-        // Given : Un produit enregistré
-        Product produitInDb = new Product()
-        {
-            ProductName = "Chaise",
-            Description = "Une superbe chaise",
-            PhotoName = "Une superbe chaise bleu",
-            PhotoUri = "https://ikea.fr/chaise.jpg"
-        };
-
-        _context.Products.Add(produitInDb);
+        // Given
+        _context.Products.Add(_productChaise);
         _context.SaveChanges();
 
-        // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
+        // When
+        IActionResult action = _productController.Delete(_productChaise.IdProduct).GetAwaiter().GetResult();
 
-        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
-        Assert.IsNull(_context.Products.Find(produitInDb.IdProduct));
+        Assert.IsNull(_context.Products.Find(_productChaise.IdProduct));
     }
 
     [TestMethod]
     public void ShouldNotDeleteProductBecauseProductDoesNotExist()
     {
-        // Given : Un produit enregistré
-        Product produitInDb = new Product()
-        {
-            ProductName = "Chaise",
-            Description = "Une superbe chaise",
-            PhotoName = "Une superbe chaise bleu",
-            PhotoUri = "https://ikea.fr/chaise.jpg"
-        };
+        // When
+        IActionResult action = _productController.Delete(999).GetAwaiter().GetResult();
 
-        // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _productController.Delete(produitInDb.IdProduct).GetAwaiter().GetResult();
-
-        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
@@ -110,146 +143,73 @@ public class ProductControllerTest
     [TestMethod]
     public void ShouldGetAllProducts()
     {
-        // Given : Des produits enregistrées
-        IEnumerable<Product> productInDb = [
-            new()
-            {
-                ProductName = "Chaise",
-                Description = "Une superbe chaise",
-                PhotoName = "Une superbe chaise bleu",
-                PhotoUri = "https://ikea.fr/chaise.jpg"
-            },
-            new()
-            {
-                ProductName = "Armoir",
-                Description = "Une superbe armoire",
-                PhotoName = "Une superbe armoire jaune",
-                PhotoUri = "https://ikea.fr/armoire-jaune.jpg"
-            }
-        ];
-
-        _context.Products.AddRange(productInDb);
+        // Given
+        _context.Products.AddRange(_productChaise, _productArmoir);
         _context.SaveChanges();
 
-        // When : On souhaite récupérer tous les produits
+        // When
         var products = _productController.GetAll().GetAwaiter().GetResult();
 
-        // Then : Tous les produits sont récupérés
+        // Then
         Assert.IsNotNull(products);
-        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<Product>));
+        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<ProductDTO>));
     }
 
     [TestMethod]
     public void GetProductShouldReturnNotFound()
     {
-        // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<ProductDetailDTO> action = _productController.Get(0).GetAwaiter().GetResult(); ;
+        // When
+        IActionResult action = _productController.Get(999).GetAwaiter().GetResult();
 
-        // Then : On ne renvoie rien et on renvoie 404
-        Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
-        Assert.IsNull(action.Value, "Le produit n'est pas null");
+        // Then
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
+        Assert.IsNull(action);
     }
 
     [TestMethod]
     public void ShouldCreateProduct()
     {
-        // Given
-        ProductAddDTO productToInsert = new()
-        {
-            Nom = "Chaise",
-            Description = "Une superbe chaise",
-            NomPhoto = "Une superbe chaise bleu",
-            UriPhoto = "https://ikea.fr/chaise.jpg"
-        };
-
         // When
-        ActionResult<ProductDetailDTO> action = _productController.Create(productToInsert).GetAwaiter().GetResult(); // ✅ Corrigé le type
+        IActionResult action = _productController.Create(_productAddChaise).GetAwaiter().GetResult();
 
         // Then
-        var createdResult = (CreatedAtActionResult)action.Result;
+        var createdResult = (CreatedAtActionResult)action;
         var createdDto = (ProductDetailDTO)createdResult.Value;
 
-        Product productInDb = _context.Products.Find(createdDto.Name);  // pas sûr de ça 
+        Product productInDb = _context.Products.Find(createdDto.Id);
 
         Assert.IsNotNull(productInDb);
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
-        Assert.AreEqual(productToInsert.Nom, productInDb.ProductName);
+        Assert.IsInstanceOfType(action, typeof(CreatedAtActionResult));
+        Assert.AreEqual(_productAddChaise.Name, productInDb.ProductName);
     }
 
     [TestMethod]
     public void ShouldUpdateProduct()
     {
-        // Given 
-        Product produitToEdit = new()
-        {
-            ProductName = "Bureau",
-            Description = "Un super bureau",
-            PhotoName = "Un super bureau bleu",
-            PhotoUri = "https://ikea.fr/bureau.jpg"
-        };
-
-        _context.Products.Add(produitToEdit);
+        // Given
+        _context.Products.Add(_productBureau);
         _context.SaveChanges();
 
-        produitToEdit.ProductName = "Lit";
-        produitToEdit.Description = "Un super lit";
-
         // When
-        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(_productBureau.IdProduct, _productUpdateLit).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
 
-        Product editedProductInDb = _context.Products.Find(produitToEdit.IdProduct);
+        Product editedProductInDb = _context.Products.Find(_productBureau.IdProduct);
 
         Assert.IsNotNull(editedProductInDb);
-        Assert.AreEqual(produitToEdit.ProductName, editedProductInDb.ProductName);
-        Assert.AreEqual(produitToEdit.Description, editedProductInDb.Description);
-    }
-
-    [TestMethod]
-    public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
-    {
-        // Given 
-        Product produitToEdit = new()
-        {
-            ProductName = "Bureau",
-            Description = "Un super bureau",
-            PhotoName = "Un super bureau bleu",
-            PhotoUri = "https://ikea.fr/bureau.jpg"
-        };
-
-        _context.Products.Add(produitToEdit);
-        _context.SaveChanges();
-
-        produitToEdit.ProductName = "Lit";
-        produitToEdit.Description = "Un super lit";
-
-        // When
-        IActionResult action = _productController.Update(0, produitToEdit).GetAwaiter().GetResult();
-
-        // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        Assert.AreEqual("Lit", editedProductInDb.ProductName);
+        Assert.AreEqual("Un super lit", editedProductInDb.Description);
     }
 
     [TestMethod]
     public void ShouldNotUpdateProductBecauseProductDoesNotExist()
     {
-        // Given 
-        Product produitToEdit = new()
-        {
-            IdProduct = 20,
-            ProductName = "Bureau",
-            Description = "Un super bureau",
-            PhotoName = "Un super bureau bleu",
-            PhotoUri = "https://ikea.fr/bureau.jpg"
-        };
-
         // When
-        IActionResult action = _productController.Update(produitToEdit.IdProduct, produitToEdit).GetAwaiter().GetResult();
+        IActionResult action = _productController.Update(999, _productUpdateLit).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);

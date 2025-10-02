@@ -1,4 +1,6 @@
 ﻿
+
+
 namespace App.DTO
 {
     public partial class ProductAddDTO
@@ -22,13 +24,13 @@ namespace App.DTO
             HashCode hash = new HashCode();
             hash.Add(Name);
             hash.Add(Description);
-            hash.Add(PhotoName);
-            hash.Add(PhotoUri);
-            hash.Add(RealStock);
-            hash.Add(MinStock);
-            hash.Add(MaxStock);
-            hash.Add(Brand);
-            hash.Add(Type);
+            hash.Add(NomPhoto);
+            hash.Add(UriPhoto);
+            hash.Add(StockReel);
+            hash.Add(StockMin);
+            hash.Add(StockMax);
+            hash.Add(Marque);
+            hash.Add(TypeProduit);
             return hash.ToHashCode();
         }
     }

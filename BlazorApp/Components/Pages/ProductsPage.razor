@@ -20,6 +20,8 @@ else
             <tr>
                 <th>IdProduit</th>
                 <th>NomProduit</th>
+                <th>Marque</th>
+                <th>Type</th>
                 <th>Détails</th>
                 <th>Edit</th>
             </tr>
@@ -30,11 +32,13 @@ else
                 <tr>
                     <td>@product.Id</td>
                     <td>@product.Name</td>
+                    <td>@product.Brand</td>
+                    <td>@product.Type</td>
                     <td>
                         <NavLink class="btn btn-link" href="@($"/ProductDetail/{product.Id}")">Voir détails</NavLink>
                     </td>
                     <td>
-                        <NavLink class="btn btn-link" href="@($"/productEdit/{product.Id}")">Voir détails</NavLink>
+                        <NavLink class="btn btn-link" href="@($"/productEdit/{product.Id}")">Delete / Update product</NavLink>
                     </td>
                 </tr>
             }
