@@ -9,14 +9,14 @@ namespace App.DTO
         {
             return obj is ProductAddDTO dTO &&
                    Name == dTO.Name &&
-                   Description == dTO.Description &&
-                   PhotoName == dTO.PhotoName &&
-                   PhotoUri == dTO.PhotoUri &&
-                   RealStock == dTO.RealStock &&
-                   MinStock == dTO.MinStock &&
-                   MaxStock == dTO.MaxStock &&
-                   Brand == dTO.Brand &&
-                   TypeProduct == dTO.TypeProduct;
+                   Description == dTO.Description&&
+                   PhotoName == dTO.PhotoName&&
+                   PhotoUri == dTO.PhotoUri&&
+                   Stock == dTO.Stock&&
+                   MinStock == dTO.MinStock&&
+                   MaxStock == dTO.MaxStock&&
+                   Brand == dTO.Brand&&
+                   Type == dTO.Type;
         }
 
         public override int GetHashCode()
@@ -26,11 +26,11 @@ namespace App.DTO
             hash.Add(Description);
             hash.Add(PhotoName);
             hash.Add(PhotoUri);
-            hash.Add(RealStock);
+            hash.Add(Stock);
             hash.Add(MinStock);
             hash.Add(MaxStock);
             hash.Add(Brand);
-            hash.Add(TypeProduct);
+            hash.Add(Type);
             return hash.ToHashCode();
         }
     }

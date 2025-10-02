@@ -15,7 +15,7 @@ else if (!productList.Any())
 }
 else
 {
-    <table class="table">
+    <table class="table" id="productTable">
         <thead>
             <tr>
                 <th>IdProduit</th>
@@ -26,20 +26,23 @@ else
                 <th>Edit</th>
             </tr>
         </thead>
+        <NavLink class="btn btn-primary" href="@($"/productAdd")">Ajouter un produit</NavLink>
+
         <tbody>
             @foreach (var product in productList)
             {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>@product.Brand</td>
-                    <td>@product.Type</td>
+                <tr class="productRow">
+                    <td class="productID">@product.Id</td>
+                    <td class="productName">@product.Name</td>
+                    <td class="productBrand">@product.Brand</td>
+                    <td class="productType">@product.Type</td>
                     <td>
                         <NavLink class="btn btn-link" href="@($"/ProductDetail/{product.Id}")">Voir détails</NavLink>
                     </td>
                     <td>
-                        <NavLink class="btn btn-link" href="@($"/productEdit/{product.Id}")">Delete / Update product</NavLink>
+                        <NavLink class="btn btn-link" href="@($"/productEdit/{product.Id}")">Supprimer / modifier produit</NavLink>
                     </td>
+                    
                 </tr>
             }
         </tbody>

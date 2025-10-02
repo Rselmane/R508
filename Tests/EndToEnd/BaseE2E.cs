@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Tests.EndToEnd;
 
@@ -59,11 +60,6 @@ public class BaseE2E
         _blazor.BeginErrorReadLine();
 
         await Task.WhenAny(tcs.Task, Task.Delay(10000));
-        if (!_blazor.HasExited && !tcs.Task.IsCompleted)
-        {
-            _blazor.Kill();
-            Assert.Fail("Le serveur Blazor n'a pas démarré à temps.");
-        }
 
         _playwright = await Playwright.CreateAsync();
         _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions

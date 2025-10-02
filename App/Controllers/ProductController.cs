@@ -77,12 +77,12 @@ public class ProductController(
         }
 
         // Gestion du type produit
-        if (!string.IsNullOrEmpty(dto.TypeProduct))
+        if (!string.IsNullOrEmpty(dto.Type))
         {
-            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduct);
+            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.Type);
             if (typeProduit == null)
             {
-                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduct };
+                typeProduit = new TypeProduct { TypeProductName = dto.Type };
                 context.TypeProducts.Add(typeProduit);
                 await context.SaveChangesAsync();
             }
@@ -128,12 +128,12 @@ public class ProductController(
         }
 
         // Gestion du type produit
-        if (!string.IsNullOrEmpty(dto.TypeProduct))
+        if (!string.IsNullOrEmpty(dto.Type))
         {
-            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduct);
+            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.Type);
             if (typeProduit == null)
             {
-                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduct };
+                typeProduit = new TypeProduct { TypeProductName = dto.Type };
                 context.TypeProducts.Add(typeProduit);
                 await context.SaveChangesAsync();
             }

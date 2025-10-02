@@ -58,15 +58,15 @@ public class TypeProductController(
             return BadRequest(ModelState);
         }
 
-        // Mapping DTO → Marque
+        // Mapping DTO → Type produit
         TypeProduct typeProduct = mapper.Map<TypeProduct>(dto);
 
 
-        // Sauvegarde de la  marque
+        // Sauvegarde du Type produit
         await manager.AddAsync(typeProduct);
 
-        // Retourner le détail de la marque  créé
-        TypeProductDTO typeProductDetail = mapper.Map<TypeProductDTO> (typeProduct);
+        // Retourner le détail du Type produit créé
+        TypeProductDTO typeProductDetail = mapper.Map<TypeProductDTO>(typeProduct);
         return CreatedAtAction("Get", new { id = typeProduct.IdTypeProduct }, typeProductDetail);
     }
 
@@ -75,7 +75,7 @@ public class TypeProductController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, [FromBody] TypeProductUpdateDTO typeProductDTO)
-    { // Récupérer le type de produit  existante
+    { // Récupérer le type de produit  existant
 
         TypeProduct? TypeProductToUpdate = await manager.GetByIdAsync(id);
 
