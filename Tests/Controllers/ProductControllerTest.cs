@@ -35,15 +35,8 @@ public class ProductControllerTest : AutoMapperConfigTests
     [TestInitialize]
     public void Initialize()
     {
-        // Configuration pour récupérer la connection string
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", optional: false)
-            .Build();
-
-        // Configuration du contexte avec PostgreSQL
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(configuration.GetConnectionString("SeriesDbContextRemote"))
+            .UseInMemoryDatabase(databaseName: $"BrandTestDb_{Guid.NewGuid()}")
             .Options;
 
         _context = new AppDbContext(options);
@@ -215,11 +208,10 @@ public class ProductControllerTest : AutoMapperConfigTests
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
-
-    //[TestCleanup]
-    //public void Cleanup()
-    //{
-    //    _context.Products.RemoveRange(_context.Products);
-    //    _context.SaveChanges();
-    //}
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
 }

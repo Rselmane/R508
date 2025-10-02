@@ -7,6 +7,7 @@ using App.Models.Repository;
 using AutoMapper;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -36,8 +37,11 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestInitialize]
     public void Initialize()
     {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+           .UseInMemoryDatabase(databaseName: $"BrandTestDb_{Guid.NewGuid()}")
+           .Options;
         // Contexte et mapper
-        _context = new AppDbContext();
+        _context = new AppDbContext(options);
 
         // Manager et controller
         _manager = new TypeProductManager(_context);
@@ -184,10 +188,10 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
-    //[TestCleanup]
-    //public void Cleanup()
-    //{
-    //    _context.TypeProducts.RemoveRange(_context.TypeProducts);
-    //    _context.SaveChanges();
-    //}
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
 }
