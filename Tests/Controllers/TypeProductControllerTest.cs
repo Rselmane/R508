@@ -68,11 +68,14 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     {
         // When
         IActionResult action = _typeProductdController.Get(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
-        TypeProductDTO returnTypeProduct = (TypeProductDTO)action;
+        OkObjectResult okResult = action as OkObjectResult;
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(TypeProductDTO));
+        Assert.IsNotNull(okResult);
+        Assert.IsInstanceOfType(okResult, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(okResult.Value, typeof(TypeProductDTO));
+
+        var returnTypeProduct = (TypeProductDTO)okResult.Value!;
         Assert.AreEqual(_typeProdcutKeybord.TypeProductName, returnTypeProduct.Name);
     }
 
@@ -102,12 +105,15 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldGetAllBrands()
     {
+        IEnumerable<TypeProduct> typeProducstInDb = _context.TypeProducts.ToList();
+        IEnumerable<TypeProductDTO> expectedTypeProducts = typeProducstInDb.Select(tp => _mapper.Map<TypeProductDTO>(tp));
+
+
         // When
         var typeProducts = _typeProductdController.GetAll().GetAwaiter().GetResult();
 
         // Then
-        Assert.IsNotNull(typeProducts);
-        Assert.IsInstanceOfType(typeProducts.Value, typeof(IEnumerable<TypeProductDTO>));
+        Assert.IsInstanceOfType(typeProducts, typeof(ActionResult<IEnumerable<TypeProductDTO>>));
     }
 
     [TestMethod]
