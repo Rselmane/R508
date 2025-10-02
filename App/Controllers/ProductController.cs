@@ -20,7 +20,7 @@ public class ProductController(
     [HttpGet("details/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProductDetailDTO?>> Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
         return result == null ? NotFound() : Ok(mapper.Map<ProductDetailDTO>(result));
@@ -53,7 +53,7 @@ public class ProductController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProductDetailDTO>> Create([FromBody] ProductAddDTO dto)
+    public async Task<IActionResult> Create([FromBody] ProductAddDTO dto)
     {
         if (!ModelState.IsValid)
         {
@@ -64,12 +64,12 @@ public class ProductController(
         var produit = mapper.Map<Product>(dto);
 
         // Gestion de la marque
-        if (!string.IsNullOrEmpty(dto.Marque))
+        if (!string.IsNullOrEmpty(dto.Brand))
         {
-            var marque = await context.Brands.FirstOrDefaultAsync(x => x.BrandName == dto.Marque);
+            var marque = await context.Brands.FirstOrDefaultAsync(x => x.BrandName == dto.Brand);
             if (marque == null)
             {
-                marque = new Brand { BrandName = dto.Marque };
+                marque = new Brand { BrandName = dto.Brand };
                 context.Brands.Add(marque);
                 await context.SaveChangesAsync();
             }
@@ -77,12 +77,12 @@ public class ProductController(
         }
 
         // Gestion du type produit
-        if (!string.IsNullOrEmpty(dto.TypeProduit))
+        if (!string.IsNullOrEmpty(dto.TypeProduct))
         {
-            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduit);
+            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduct);
             if (typeProduit == null)
             {
-                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduit };
+                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduct };
                 context.TypeProducts.Add(typeProduit);
                 await context.SaveChangesAsync();
             }
@@ -101,18 +101,48 @@ public class ProductController(
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Update(int id, [FromBody] Product produit)
+    public async Task<IActionResult> Update(int id, [FromBody] ProductAddDTO dto)
     {
-        if (id != produit.IdProduct)
-        {
-            return BadRequest();
-        }
-        ActionResult<Product?> prodToUpdate = await manager.GetByIdAsync(id);
-        if (prodToUpdate.Value == null)
+        // Récupérer le produit existant
+        Product? produitToUpdate = await manager.GetByIdAsync(id);
+        if (produitToUpdate == null)
         {
             return NotFound();
         }
-        await manager.UpdateAsync(prodToUpdate.Value, produit);
+
+        // Mapper le DTO vers une nouvelle entité Product
+        var updatedProduct = mapper.Map<Product>(dto);
+        updatedProduct.IdProduct = id; // Conserver l'ID
+
+        // Gestion de la marque
+        if (!string.IsNullOrEmpty(dto.Brand))
+        {
+            var marque = await context.Brands.FirstOrDefaultAsync(x => x.BrandName == dto.Brand);
+            if (marque == null)
+            {
+                marque = new Brand { BrandName = dto.Brand };
+                context.Brands.Add(marque);
+                await context.SaveChangesAsync();
+            }
+            updatedProduct.IdBrand = marque.IdBrand;
+        }
+
+        // Gestion du type produit
+        if (!string.IsNullOrEmpty(dto.TypeProduct))
+        {
+            var typeProduit = await context.TypeProducts.FirstOrDefaultAsync(x => x.TypeProductName == dto.TypeProduct);
+            if (typeProduit == null)
+            {
+                typeProduit = new TypeProduct { TypeProductName = dto.TypeProduct };
+                context.TypeProducts.Add(typeProduit);
+                await context.SaveChangesAsync();
+            }
+            updatedProduct.IdTypeProduct = typeProduit.IdTypeProduct;
+        }
+
+        // Mettre à jour le produit
+        await manager.UpdateAsync(produitToUpdate, updatedProduct);
+
         return NoContent();
     }
 }
