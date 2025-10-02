@@ -18,7 +18,7 @@ public class BrandController(
     [HttpGet("details/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<BrandDTO?>> Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
         var result = await manager.GetByIdAsync(id);
         return result == null ? NotFound() : Ok(mapper.Map<BrandDTO>(result));

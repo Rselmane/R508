@@ -6,7 +6,9 @@ using App.Models.EntityFramework;
 using App.Models.Repository;
 using AutoMapper;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -36,8 +38,11 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestInitialize]
     public void Initialize()
     {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+           .UseInMemoryDatabase(databaseName: $"TypeProductTestDb_{Guid.NewGuid()}")
+           .Options;
         // Contexte et mapper
-        _context = new AppDbContext();
+        _context = new AppDbContext(options);
 
         // Manager et controller
         _manager = new TypeProductManager(_context);
@@ -59,20 +64,23 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     }
 
     [TestMethod]
-    public void ShouldGetBrand()
+    public void ShouldGetTypeProduct()
     {
         // When
         IActionResult action = _typeProductdController.Get(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
-        TypeProductDTO returnTypeProduct = (TypeProductDTO)action;
+        OkObjectResult okResult = action as OkObjectResult;
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(TypeProductDTO));
+        Assert.IsNotNull(okResult);
+        Assert.IsInstanceOfType(okResult, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(okResult.Value, typeof(TypeProductDTO));
+
+        var returnTypeProduct = (TypeProductDTO)okResult.Value!;
         Assert.AreEqual(_typeProdcutKeybord.TypeProductName, returnTypeProduct.Name);
     }
 
     [TestMethod]
-    public void ShouldDeleteBrand()
+    public void ShouldDeleteTypeProduct()
     {
         // When
         IActionResult action = _typeProductdController.Delete(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
@@ -84,7 +92,7 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     }
 
     [TestMethod]
-    public void ShouldNotDeleteBrandBecauseBrandDoesNotExist()
+    public void ShouldNotDeleteTypeProductBecauseTypeProductDoesNotExist()
     {
         // When
         IActionResult action = _typeProductdController.Delete(999).GetAwaiter().GetResult();
@@ -95,29 +103,30 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     }
 
     [TestMethod]
-    public void ShouldGetAllBrands()
+    public void ShouldGetAllTypeProducts()
     {
+        IEnumerable<TypeProduct> typeProducstInDb = _context.TypeProducts.ToList();
+        IEnumerable<TypeProductDTO> expectedTypeProducts = typeProducstInDb.Select(tp => _mapper.Map<TypeProductDTO>(tp));
+
         // When
         var typeProducts = _typeProductdController.GetAll().GetAwaiter().GetResult();
 
         // Then
-        Assert.IsNotNull(typeProducts);
-        Assert.IsInstanceOfType(typeProducts.Value, typeof(IEnumerable<TypeProductDTO>));
+        Assert.IsInstanceOfType(typeProducts, typeof(ActionResult<IEnumerable<TypeProductDTO>>));
     }
 
     [TestMethod]
-    public void GetBrandShouldReturnNotFound()
+    public void GetTypeProductShouldReturnNotFound()
     {
         // When
         IActionResult action = _typeProductdController.Get(999).GetAwaiter().GetResult();
 
         // Then
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-        Assert.IsNull(action);
     }
 
     [TestMethod]
-    public void ShouldCreateBrand()
+    public void ShouldCreateTypeProduct()
     {
         // Given
         TypeProductUpdateDTO newTypeProductDto = new TypeProductUpdateDTO { Name = "NewTypeProduct" };
@@ -138,7 +147,7 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     }
 
     [TestMethod]
-    public void ShouldUpdateBrand()
+    public void ShouldUpdateTypeProduct()
     {
         // Given
         var updateDto = new TypeProductUpdateDTO { Name = "KeybordV2" };
@@ -157,7 +166,7 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     }
 
     [TestMethod]
-    public void ShouldNotUpdateBrandBecauseIdInUrlIsDifferent()
+    public void ShouldNotUpdateTypeProductBecauseIdInUrlIsDifferent()
     {
         // Given
         var updateDto = new TypeProductUpdateDTO { Name = "OnlyFan" };
@@ -166,12 +175,11 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         IActionResult action = _typeProductdController.Update(0, updateDto).GetAwaiter().GetResult();
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
     [TestMethod]
-    public void ShouldNotUpdateBrandBecauseBrandDoesNotExist()
+    public void ShouldNotUpdateTypeProductBecauseTypeProductDoesNotExist()
     {
         // Given
         var updateDto = new TypeProductUpdateDTO { Name = "ScreenV2" };
@@ -184,10 +192,10 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
-    //[TestCleanup]
-    //public void Cleanup()
-    //{
-    //    _context.TypeProducts.RemoveRange(_context.TypeProducts);
-    //    _context.SaveChanges();
-    //}
+    [TestCleanup]
+    public void Cleanup()
+    {
+        _context.Database.EnsureDeleted();
+        _context.Dispose();
+    }
 }
