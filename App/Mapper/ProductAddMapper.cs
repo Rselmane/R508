@@ -9,7 +9,7 @@ namespace App.Mapper
         public ProductMappingProfile()
         {
             CreateMap<ProductAddDTO, Product>()
-            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Nom));
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Name));
 
         }
     }
