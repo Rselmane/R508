@@ -15,7 +15,7 @@ public class TypeProductController(
     AppDbContext context
     ) : ControllerBase
 {
-    [HttpGet("type_product/{id}")]
+    [HttpGet("details/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(int id)

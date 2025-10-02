@@ -1,0 +1,47 @@
+﻿@page "/typeProducts"
+@using Models
+@using Service
+@inject IService<TypeProduct> dataRepository
+
+<h1>Liste des types de produit</h1>
+
+@if (typeProductList == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else if (!typeProductList.Any())
+{
+    <p>Aucun type de produit trouvé.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom du type de produit</th>
+            </tr>
+        </thead>
+            <NavLink class="btn btn-primary" href="@($"/typeProductAdd")">Ajouter un type de produit</NavLink>
+        <tbody>
+            @foreach (var typeProduct in typeProductList)
+            {
+                <tr>
+                    <td>@typeProduct.Name</td>
+                    <td>
+                        <NavLink class="btn btn-link" href="@($"/typeproductEdit/{typeProduct.Id}")">Supprimer / Modifier type de produit</NavLink>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TypeProduct>? typeProductList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        typeProductList = await dataRepository.GetAllAsync() ?? new List<TypeProduct>();
+    }
+}

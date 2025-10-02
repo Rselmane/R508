@@ -15,7 +15,7 @@ public class BrandController(
     AppDbContext context
     ) : ControllerBase
 {
-    [HttpGet("brand/{id}")]
+    [HttpGet("details/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<BrandDTO?>> Get(int id)

@@ -18,18 +18,21 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>IdMarque</th>
                 <th>NomMarque</th>
             </tr>
         </thead>
+            <NavLink class="btn btn-primary" href="@($"/brandAdd")">Ajouter une marque</NavLink>
         <tbody>
             @foreach (var brand in brandList)
             {
                 <tr>
-                    <td>@brand.Id</td>
                     <td>@brand.Name</td>
+                    <td>
+                        <NavLink class="btn btn-link" href="@($"/brandEdit/{brand.Id}")">Supprimer / Modifier marque</NavLink>
+                    </td>
                 </tr>
             }
+
         </tbody>
     </table>
 }

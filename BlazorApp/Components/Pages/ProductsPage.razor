@@ -18,7 +18,6 @@ else
     <table class="table" id="productTable">
         <thead>
             <tr>
-                <th>IdProduit</th>
                 <th>NomProduit</th>
                 <th>Marque</th>
                 <th>Type</th>
@@ -32,7 +31,6 @@ else
             @foreach (var product in productList)
             {
                 <tr class="productRow">
-                    <td class="productID">@product.Id</td>
                     <td class="productName">@product.Name</td>
                     <td class="productBrand">@product.Brand</td>
                     <td class="productType">@product.Type</td>
