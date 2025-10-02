@@ -21,8 +21,6 @@ else
             <p class="card-text"><strong>Marque :</strong> @product.Brand</p>
             <p class="card-text"><strong>Description :</strong> @product.Description</p>
             <p class="card-text"><strong>Stock :</strong> @(product.Stock ?? 0)</p>
-            <p class="card-text"><strong>Stock minimal:</strong> @(product.MinStock)</p>
-            <p class="card-text"><strong>Stock maximal:</strong> @(product.MaxStock)</p>
             <p class="card-text"><strong>En réappro :</strong> @(product.InRestocking ? "Oui" : "Non")</p>
             <img src="@product.PhotoUri" alt="@product.PhotoName" style="max-width:300px" />
             <br/>
