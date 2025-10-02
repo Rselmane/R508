@@ -168,7 +168,7 @@ namespace Tests.Controllers
         public void Create_ValidTypeProduct_ReturnsCreatedAtAction()
         {
             // Given
-            TypeProductDTO dto = new TypeProductDTO { Name = "IKA" };
+            TypeProductUpdateDTO dto = new TypeProductUpdateDTO { Name = "IKA" };
 
             _mapperMock.Setup(m => m.Map<TypeProduct>(dto)).Returns(_sampleTypeProduct);
             _typeProductRepositoryMock.Setup(r => r.AddAsync(_sampleTypeProduct)).ReturnsAsync(_sampleTypeProduct);

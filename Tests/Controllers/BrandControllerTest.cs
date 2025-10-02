@@ -132,7 +132,7 @@ public class BrandControllerTest : AutoMapperConfigTests
     public void ShouldCreateBrand()
     {
         // Given
-        var newBrandDto = new BrandDTO { Name = "NewBrand" };
+        BrandUpdateDTO newBrandDto = new BrandUpdateDTO { Name = "NewBrand" };
 
         // When
         IActionResult action = _brandController.Create(newBrandDto).GetAwaiter().GetResult();

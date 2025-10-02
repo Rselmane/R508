@@ -120,7 +120,7 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     public void ShouldCreateBrand()
     {
         // Given
-        TypeProductDTO newTypeProductDto = new TypeProductDTO { Name = "NewTypeProduct" };
+        TypeProductUpdateDTO newTypeProductDto = new TypeProductUpdateDTO { Name = "NewTypeProduct" };
 
         // When
         IActionResult action = _typeProductdController.Create(newTypeProductDto).GetAwaiter().GetResult();

@@ -51,7 +51,7 @@ public class TypeProductController(
     [HttpPost("create")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] TypeProductDTO dto)
+    public async Task<IActionResult> Create([FromBody] TypeProductUpdateDTO dto)
     {
         if (!ModelState.IsValid)
         {
@@ -66,7 +66,7 @@ public class TypeProductController(
         await manager.AddAsync(typeProduct);
 
         // Retourner le détail de la marque  créé
-        TypeProductDTO typeProductDetail = mapper.Map<TypeProductDTO>(typeProduct);
+        TypeProductDTO typeProductDetail = mapper.Map<TypeProductDTO> (typeProduct);
         return CreatedAtAction("Get", new { id = typeProduct.IdTypeProduct }, typeProductDetail);
     }
 
