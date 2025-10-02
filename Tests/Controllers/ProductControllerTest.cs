@@ -52,7 +52,9 @@ public class ProductControllerTest : AutoMapperConfigTests
             ProductName = "Chaise",
             Description = "Une superbe chaise",
             PhotoName = "Une superbe chaise bleu",
-            PhotoUri = "https://ikea.fr/chaise.jpg"
+            PhotoUri = "https://ikea.fr/chaise.jpg",
+            MinStock = 5,
+            MaxStock = 30
         };
 
         _productArmoir = new Product()
@@ -60,7 +62,9 @@ public class ProductControllerTest : AutoMapperConfigTests
             ProductName = "Armoir",
             Description = "Une superbe armoire",
             PhotoName = "Une superbe armoire jaune",
-            PhotoUri = "https://ikea.fr/armoire-jaune.jpg"
+            PhotoUri = "https://ikea.fr/armoire-jaune.jpg",
+            MinStock = 2,
+            MaxStock = 10
         };
 
         _productBureau = new Product()
@@ -68,8 +72,13 @@ public class ProductControllerTest : AutoMapperConfigTests
             ProductName = "Bureau",
             Description = "Un super bureau",
             PhotoName = "Un super bureau bleu",
-            PhotoUri = "https://ikea.fr/bureau.jpg"
+            PhotoUri = "https://ikea.fr/bureau.jpg",
+            MinStock = 3,
+            MaxStock = 20
         };
+
+        _context.Products.AddRange(_productChaise, _productArmoir, _productBureau);
+        _context.SaveChanges();
 
         // DTOs
         _productAddChaise = new ProductAddDTO()
@@ -77,7 +86,12 @@ public class ProductControllerTest : AutoMapperConfigTests
             Name = "Chaise",
             Description = "Une superbe chaise",
             PhotoName = "Une superbe chaise bleu",
-            PhotoUri = "https://ikea.fr/chaise.jpg"
+            PhotoUri = "https://ikea.fr/chaise.jpg",
+            Stock = 15,
+            MinStock = 5,
+            MaxStock = 40,
+            Brand = "Ikea",
+            Type = "Chaise"
         };
 
         _productUpdateLit = new ProductAddDTO()
@@ -85,9 +99,15 @@ public class ProductControllerTest : AutoMapperConfigTests
             Name = "Lit",
             Description = "Un super lit",
             PhotoName = "Un super bureau bleu",
-            PhotoUri = "https://ikea.fr/bureau.jpg"
+            PhotoUri = "https://ikea.fr/bureau.jpg",
+            Stock = 6,
+            MinStock = 2,
+            MaxStock = 15,
+            Brand = "Conforama",
+            Type = "Lit"
         };
     }
+
 
     [TestMethod]
     public void ShouldGetProduct()
@@ -156,7 +176,6 @@ public class ProductControllerTest : AutoMapperConfigTests
 
         // Then
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-        Assert.IsNull(action);
     }
 
     [TestMethod]
@@ -171,8 +190,7 @@ public class ProductControllerTest : AutoMapperConfigTests
 
         Product productInDb = _context.Products.Find(createdDto.Id);
 
-        Assert.IsNotNull(productInDb);
-        Assert.IsNotNull(action);
+
         Assert.IsInstanceOfType(action, typeof(CreatedAtActionResult));
         Assert.AreEqual(_productAddChaise.Name, productInDb.ProductName);
     }

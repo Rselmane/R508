@@ -66,14 +66,18 @@ public class BrandControllerTest : AutoMapperConfigTests
     public void ShouldGetBrand()
     {
         // When
-        var action = _brandController.Get(_brandAdidas.IdBrand).GetAwaiter().GetResult();
-        BrandDTO returnBrand = action.Value;
+        IActionResult action = _brandController.Get(_brandAdidas.IdBrand).GetAwaiter().GetResult();
+        OkObjectResult okResult = action as OkObjectResult;
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(BrandDTO));
+        Assert.IsNotNull(okResult);
+        Assert.IsInstanceOfType(okResult, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(okResult.Value, typeof(BrandDTO));
+
+        var returnBrand = (BrandDTO)okResult.Value!;
         Assert.AreEqual(_brandAdidas.BrandName, returnBrand.Name);
     }
+
 
     [TestMethod]
     public void ShouldDeleteBrand()
@@ -109,19 +113,17 @@ public class BrandControllerTest : AutoMapperConfigTests
         var action = _brandController.GetAll().GetAwaiter().GetResult();
 
         // Then : Toutes les marques sont récupérées
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(IEnumerable<BrandDTO>));
+        Assert.IsInstanceOfType(action, typeof(ActionResult<IEnumerable<BrandDTO>>));
     }
 
     [TestMethod]
     public void GetBrandShouldReturnNotFound()
     {
         // When
-        var action = _brandController.Get(999).GetAwaiter().GetResult();
+        IActionResult action = _brandController.Get(999).GetAwaiter().GetResult();
 
         // Then
-        Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult));
-        Assert.IsNull(action.Value);
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
     [TestMethod]

@@ -6,6 +6,7 @@ using App.Models.EntityFramework;
 using App.Models.Repository;
 using AutoMapper;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -117,7 +118,6 @@ public class TypeProductControllerTest : AutoMapperConfigTests
 
         // Then
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-        Assert.IsNull(action);
     }
 
     [TestMethod]
@@ -170,8 +170,7 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         IActionResult action = _typeProductdController.Update(0, updateDto).GetAwaiter().GetResult();
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
     [TestMethod]

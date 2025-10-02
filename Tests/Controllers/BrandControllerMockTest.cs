@@ -85,8 +85,8 @@ namespace Tests.Controllers
             var result = _controller.Get(_sampleBrand.IdBrand).GetAwaiter().GetResult();
 
             // Then : On récupère la marque et le code de retour est 200
-            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(_sampleBrandDTO, ((OkObjectResult)result.Result).Value);
+            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.AreEqual(_sampleBrandDTO, ((OkObjectResult)result).Value);
 
             _brandRepositoryMock.Verify(r => r.GetByIdAsync(_sampleBrand.IdBrand), Times.Once);
         }
@@ -105,7 +105,7 @@ namespace Tests.Controllers
             var result = _controller.Get(99).GetAwaiter().GetResult();
 
             // Then : On ne renvoie rien et on renvoie NOT_FOUND (404)
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundResult));
+            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
 
             _brandRepositoryMock.Verify(r => r.GetByIdAsync(99), Times.Once);
         }
