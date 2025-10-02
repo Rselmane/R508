@@ -19,5 +19,14 @@ public class ProductManager(AppDbContext context) : CrudRepository<Product>(cont
             .ToListAsync();
     }
 
+    public async Task<Product> GetByIdAsync(int id)
+    {
+        return await _context.Products
+            .Include(p => p.NavigationBrand)
+            .Include(p => p.NavigationTypeProduct)
+            .FirstOrDefaultAsync(p => p.IdProduct == id);
+    }
+
+
 
 }
