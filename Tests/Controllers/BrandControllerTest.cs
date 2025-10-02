@@ -182,11 +182,11 @@ public class BrandControllerTest : AutoMapperConfigTests
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        // Nettoyage des données de test
-        _context.Brands.RemoveRange(_context.Brands);
-        _context.SaveChanges();
-    }
+    //[TestCleanup]
+    //public void Cleanup()
+    //{
+    //    // Nettoyage des données de test
+    //    _context.Brands.RemoveRange(_context.Brands);
+    //    _context.SaveChanges();
+    //}
 }

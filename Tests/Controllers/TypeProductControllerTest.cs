@@ -184,10 +184,10 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        _context.TypeProducts.RemoveRange(_context.TypeProducts);
-        _context.SaveChanges();
-    }
+    //[TestCleanup]
+    //public void Cleanup()
+    //{
+    //    _context.TypeProducts.RemoveRange(_context.TypeProducts);
+    //    _context.SaveChanges();
+    //}
 }
