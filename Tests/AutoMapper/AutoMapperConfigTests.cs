@@ -22,6 +22,7 @@ public abstract class AutoMapperConfigTests
             cfg.AddProfile<BrandMapper>();
             cfg.AddProfile<TypeProductMapper>();
             cfg.AddProfile<BrandUpdateMapper>();
+            cfg.AddProfile<TypeProductUpdateMapper>();
         }, new LoggerFactory());
 
         _config.AssertConfigurationIsValid();

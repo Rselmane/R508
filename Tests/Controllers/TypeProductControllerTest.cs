@@ -61,35 +61,35 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldGetBrand()
     {
-        // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<TypeProductDTO> action = _typeProductdController.Get(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
-        TypeProductDTO returnTypeProduct = action.Value;
+        // When
+        IActionResult action = _typeProductdController.Get(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
+        TypeProductDTO returnTypeProduct = (TypeProductDTO)action;
 
-        // Then : On récupère le produit et le code de retour est 200
+        // Then
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Value, typeof(TypeProductDTO));
+        Assert.IsInstanceOfType(action, typeof(TypeProductDTO));
         Assert.AreEqual(_typeProdcutKeybord.TypeProductName, returnTypeProduct.Name);
     }
 
     [TestMethod]
     public void ShouldDeleteBrand()
     {
-        // When : Je souhaite supprimé un produit depuis l'API
+        // When
         IActionResult action = _typeProductdController.Delete(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
 
-        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NoContentResult));
-        Assert.IsNull(_context.Products.Find(_typeProdcutKeybord.IdTypeProduct));
+        Assert.IsNull(_context.TypeProducts.Find(_typeProdcutKeybord.IdTypeProduct));
     }
 
     [TestMethod]
     public void ShouldNotDeleteBrandBecauseBrandDoesNotExist()
     {
-        // When : Je souhaite supprimé un produit depuis l'API
-        IActionResult action = _typeProductdController.Delete(_typeProdcutKeybord.IdTypeProduct).GetAwaiter().GetResult();
+        // When
+        IActionResult action = _typeProductdController.Delete(999).GetAwaiter().GetResult();
 
-        // Then : Le produit a bien été supprimé et le code HTTP est NO_CONTENT (204)
+        // Then
         Assert.IsNotNull(action);
         Assert.IsInstanceOfType(action, typeof(NotFoundResult));
     }
@@ -97,51 +97,54 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldGetAllBrands()
     {
-        // When : On souhaite récupérer tous les produits
+        // When
         var typeProducts = _typeProductdController.GetAll().GetAwaiter().GetResult();
 
-        // Then : Tous les produits sont récupérés
+        // Then
         Assert.IsNotNull(typeProducts);
-        Assert.IsInstanceOfType(typeProducts.Value, typeof(IEnumerable<TypeProduct>));
+        Assert.IsInstanceOfType(typeProducts.Value, typeof(IEnumerable<TypeProductDTO>));
     }
 
     [TestMethod]
     public void GetBrandShouldReturnNotFound()
     {
-        // When : J'appelle la méthode get de mon api pour récupérer le produit
-        ActionResult<TypeProductDTO> action = _typeProductdController.Get(0).GetAwaiter().GetResult(); ;
+        // When
+        IActionResult action = _typeProductdController.Get(999).GetAwaiter().GetResult();
 
-        // Then : On ne renvoie rien et on renvoie 404
-        Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Ne renvoie pas 404");
-        Assert.IsNull(action.Value, "Le produit n'est pas null");
+        // Then
+        Assert.IsInstanceOfType(action, typeof(NotFoundResult));
+        Assert.IsNull(action);
     }
 
     [TestMethod]
     public void ShouldCreateBrand()
     {
+        // Given
+        TypeProductDTO newTypeProductDto = new TypeProductDTO { Name = "NewTypeProduct" };
+
         // When
-        ActionResult<TypeProductDTO> action = _typeProductdController.Create(_typeProductDtoMouse).GetAwaiter().GetResult(); // ✅ Corrigé le type
+        IActionResult action = _typeProductdController.Create(newTypeProductDto).GetAwaiter().GetResult();
 
         // Then
-        var createdResult = (CreatedAtActionResult)action.Result;
-        var createdDto = (TypeProductDTO)createdResult.Value;
+        CreatedAtActionResult createdResult = (CreatedAtActionResult)action;
+        TypeProductDTO createdDto = (TypeProductDTO)createdResult.Value;
 
-        TypeProduct typeProductInDb = _context.TypeProducts.Find(createdDto.Name);  // pas sûr de ça 
+        TypeProduct typeProductInDb = _context.TypeProducts.Find(createdDto.Id);
 
         Assert.IsNotNull(typeProductInDb);
         Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult));
-        Assert.AreEqual(_typeProductDtoMouse.Name, typeProductInDb.TypeProductName);
+        Assert.IsInstanceOfType(action, typeof(CreatedAtActionResult));
+        Assert.AreEqual(newTypeProductDto.Name, typeProductInDb.TypeProductName);
     }
 
     [TestMethod]
     public void ShouldUpdateBrand()
     {
         // Given
-        _typeProdcutKeybord.TypeProductName = "KeybordV2";
+        var updateDto = new TypeProductUpdateDTO { Name = "KeybordV2" };
 
         // When
-        IActionResult action = _typeProductdController.Update(_typeProdcutKeybord.IdTypeProduct, _typeProdcutKeybord).GetAwaiter().GetResult();
+        IActionResult action = _typeProductdController.Update(_typeProdcutKeybord.IdTypeProduct, updateDto).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
@@ -150,16 +153,17 @@ public class TypeProductControllerTest : AutoMapperConfigTests
         TypeProduct editedTypeProductInDb = _context.TypeProducts.Find(_typeProdcutKeybord.IdTypeProduct);
 
         Assert.IsNotNull(editedTypeProductInDb);
-        Assert.AreEqual(_typeProdcutKeybord.TypeProductName, editedTypeProductInDb.TypeProductName);
+        Assert.AreEqual("KeybordV2", editedTypeProductInDb.TypeProductName);
     }
 
     [TestMethod]
     public void ShouldNotUpdateBrandBecauseIdInUrlIsDifferent()
     {
-        _typeProdcutScreen.TypeProductName = "OnlyFan";
+        // Given
+        var updateDto = new TypeProductUpdateDTO { Name = "OnlyFan" };
 
         // When
-        IActionResult action = _typeProductdController.Update(0, _typeProdcutScreen).GetAwaiter().GetResult();
+        IActionResult action = _typeProductdController.Update(0, updateDto).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);
@@ -169,8 +173,11 @@ public class TypeProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldNotUpdateBrandBecauseBrandDoesNotExist()
     {
+        // Given
+        var updateDto = new TypeProductUpdateDTO { Name = "ScreenV2" };
+
         // When
-        IActionResult action = _typeProductdController.Update(_typeProdcutScreen.IdTypeProduct, _typeProdcutScreen).GetAwaiter().GetResult();
+        IActionResult action = _typeProductdController.Update(999, updateDto).GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(action);

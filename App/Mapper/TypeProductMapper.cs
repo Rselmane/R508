@@ -4,18 +4,17 @@ using AutoMapper;
 
 namespace App.Mapper;
 
-public class TypeProductMapper : Profile
+public class TypeProductUpdateMapper : Profile
 {
-    public TypeProductMapper()
+    public TypeProductUpdateMapper()
     {
-        // TypeProduit -> TypeProduitDTO
-        CreateMap<TypeProduct, TypeProductDTO>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.IdTypeProduct))
+        // TypeProduit -> TypeProductUpdateDTO
+        CreateMap<TypeProduct, TypeProductUpdateDTO>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.TypeProductName));
 
-        // TypeProduitDTO -> TypeProduit
-        CreateMap<TypeProductDTO, TypeProduct>()
-            .ForMember(dest => dest.IdTypeProduct, opt => opt.MapFrom(src => src.Id))
+        // TypeProductUpdateDTO -> TypeProduit
+        CreateMap<TypeProductUpdateDTO, TypeProduct>()
+            .ForMember(dest => dest.IdTypeProduct, opt => opt.Ignore())
             .ForMember(dest => dest.TypeProductName, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Products, opt => opt.Ignore()); // On ignore la navigation
     }
