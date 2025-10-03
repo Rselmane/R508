@@ -1,6 +1,6 @@
 ﻿namespace App.DTO
 {
-    public partial class BrandUpdateDTO
+    public class BrandUpdateDTO
     {   public string? Name { get; set; }
     }
 }
