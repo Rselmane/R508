@@ -19,6 +19,7 @@ public abstract class AutoMapperConfigTests
         {
             cfg.AddProfile<ProductMapper>();
             cfg.AddProfile<ProductDetailMapper>();
+            cfg.AddProfile<ProductMappingProfile>();
             cfg.AddProfile<BrandMapper>();
             cfg.AddProfile<TypeProductMapper>();
             cfg.AddProfile<BrandUpdateMapper>();

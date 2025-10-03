@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Tests.AutoMapper;
 
 namespace Tests.Controllers;
@@ -24,6 +25,7 @@ public class ProductControllerTest : AutoMapperConfigTests
 {
     private AppDbContext _context;
     private ProductController _productController;
+    private IProductRepository _manager;
 
     // Objets communs pour les tests
     private Product _productChaise;
@@ -39,12 +41,10 @@ public class ProductControllerTest : AutoMapperConfigTests
             .UseInMemoryDatabase(databaseName: $"BrandTestDb_{Guid.NewGuid()}")
             .Options;
 
-        _context = new AppDbContext(options);
+        _context = new AppDbContext(options);        
 
-        IMapper mapper = _mapper;
-
-        IProductRepository manager = new ProductManager(_context);
-        _productController = new ProductController(mapper, manager, _context);
+        _manager = new ProductManager(_context);
+        _productController = new ProductController(_mapper, _manager, _context);
 
         // Données communes : entities
         _productChaise = new Product()
@@ -112,27 +112,22 @@ public class ProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldGetProduct()
     {
-        // Given
-        _context.Products.Add(_productChaise);
-        _context.SaveChanges();
-
         // When
-       IActionResult action = _productController.Get(_productChaise.IdProduct).GetAwaiter().GetResult();
+        IActionResult action = _productController.Get(_productChaise.IdProduct).GetAwaiter().GetResult();
+        OkObjectResult okResult = action as OkObjectResult;
 
         // Then
-        Assert.IsNotNull(action);
-        Assert.IsInstanceOfType(action, typeof(ProductDetailDTO));
-        ProductDetailDTO returnProduct =(ProductDetailDTO) action;
+        Assert.IsNotNull(okResult);
+        Assert.IsInstanceOfType(okResult, typeof(OkObjectResult));
+        Assert.IsInstanceOfType(okResult.Value, typeof(ProductDetailDTO));
+
+        var returnProduct = (ProductDetailDTO)okResult.Value!;
         Assert.AreEqual(_productChaise.ProductName, returnProduct.Name);
     }
 
     [TestMethod]
     public void ShouldDeleteProduct()
     {
-        // Given
-        _context.Products.Add(_productChaise);
-        _context.SaveChanges();
-
         // When
         IActionResult action = _productController.Delete(_productChaise.IdProduct).GetAwaiter().GetResult();
 
@@ -156,16 +151,15 @@ public class ProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldGetAllProducts()
     {
-        // Given
-        _context.Products.AddRange(_productChaise, _productArmoir);
-        _context.SaveChanges();
+        IEnumerable<Product> productsInDb = _context.Products.ToList();
+        IEnumerable<ProductDTO> expectedProducts = productsInDb.Select(p => _mapper.Map<ProductDTO>(p));
 
         // When
         var products = _productController.GetAll().GetAwaiter().GetResult();
 
         // Then
         Assert.IsNotNull(products);
-        Assert.IsInstanceOfType(products.Value, typeof(IEnumerable<ProductDTO>));
+        Assert.IsInstanceOfType(products, typeof(ActionResult<IEnumerable<ProductDTO>>));
     }
 
     [TestMethod]
@@ -198,10 +192,6 @@ public class ProductControllerTest : AutoMapperConfigTests
     [TestMethod]
     public void ShouldUpdateProduct()
     {
-        // Given
-        _context.Products.Add(_productBureau);
-        _context.SaveChanges();
-
         // When
         IActionResult action = _productController.Update(_productBureau.IdProduct, _productUpdateLit).GetAwaiter().GetResult();
 
