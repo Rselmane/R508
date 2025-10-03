@@ -15,7 +15,7 @@ else if (!typeProductList.Any())
 }
 else
 {
-    <table class="table">
+    <table class="table" id="typeProductTable">
         <thead>
             <tr>
                 <th>Nom du type de produit</th>
@@ -25,8 +25,8 @@ else
         <tbody>
             @foreach (var typeProduct in typeProductList)
             {
-                <tr>
-                    <td>@typeProduct.Name</td>
+                <tr class="typeProductRow">
+                    <td class="typeProductName">@typeProduct.Name</td>
                     <td>
                         <NavLink class="btn btn-link" href="@($"/typeproductEdit/{typeProduct.Id}")">Supprimer / Modifier type de produit</NavLink>
                     </td>

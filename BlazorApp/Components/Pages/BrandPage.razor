@@ -15,7 +15,7 @@ else if (!brandList.Any())
 }
 else
 {
-    <table class="table">
+    <table class="table" id="brandTable">
         <thead>
             <tr>
                 <th>NomMarque</th>
@@ -25,8 +25,8 @@ else
         <tbody>
             @foreach (var brand in brandList)
             {
-                <tr>
-                    <td>@brand.Name</td>
+                <tr class="brandRow">
+                    <td class="brandName">@brand.Name</td>
                     <td>
                         <NavLink class="btn btn-link" href="@($"/brandEdit/{brand.Id}")">Supprimer / Modifier marque</NavLink>
                     </td>
