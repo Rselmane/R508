@@ -70,6 +70,6 @@ Si vous le souhaitez, vous pouvez sinon utiliser une base de donnée locale :
 
 #### Tests end-to-end
 Pour exécuter les tests end-to-end présents, une étape de configuration supplémentaire est nécessaire :
-- Si ce n'est pas déjà fait, lancer le projet afin de créer `/bin/` et `/obj/`
+- Si ce n'est pas déjà fait, lancer le projet de test (avec au moins un test E2E) afin de créer `/bin/` et `/obj/`
 - Avec powershell, déplacez vous vers `<Project>/Tests/bin/Debug/net8.0` et lancez la commande `./playwright.ps1 install` afin d'installer les navigateurs virtuels requis
 - Lors de l’exécution des tests E2E, assurez vous que le projet n'est pas lancé dans une autre fenêtre ou un autre processus (port `7008` et `7777`). Si c'est le cas, le test tentera de les arrêter automatiquement, mais cette procédure peut échouer selon votre système d'exploitation et les permissions du programme.
